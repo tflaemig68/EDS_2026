@@ -5,6 +5,11 @@
 **/Debug/
 **/Release/
 
+# Folders not relevant for T3200
+**/BALi_BlckP/
+**/BLINK2_BlckP/
+**/HAL_Blinky1/
+
 # Compiled files
 *.o
 *.d
