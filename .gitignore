@@ -1,0 +1,19 @@
+# Eclipse / STM32CubeIDE
+.metadata/
+
+# Build folders
+**/Debug/
+**/Release/
+
+# Compiled files
+*.o
+*.d
+*.elf
+*.map
+*.log
+*.pdom
+*.su
+
+# OS
+.DS_Store
+Thumbs.db
