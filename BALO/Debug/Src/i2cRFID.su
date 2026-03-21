@@ -1,3 +1,0 @@
-../Src/i2cRFID.c:60:6:RFID_LED	16	static
-../Src/i2cRFID.c:72:8:RFID_readCard	40	static
-../Src/i2cRFID.c:124:8:RFID_readFWVersion	40	static

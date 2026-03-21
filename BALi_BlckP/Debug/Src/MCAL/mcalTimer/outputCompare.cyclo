@@ -1,8 +1,0 @@
-outputCompare.c:36:21:timerSetOutputCompareMode	39
-outputCompare.c:238:21:timerEnableOutputComparePreload	7
-outputCompare.c:296:21:timerDisableOutputComparePreload	7
-outputCompare.c:354:21:timerEnableOutputCompareFastCompare	7
-outputCompare.c:412:21:timerDisableOutputCompareFastCompare	7
-outputCompare.c:470:21:timerEnableOutputCompareClearOutput	7
-outputCompare.c:528:21:timerDisableOutputCompareClearOutput	7
-outputCompare.c:585:21:timerSelectOutputCompareCenterAlignMode	10

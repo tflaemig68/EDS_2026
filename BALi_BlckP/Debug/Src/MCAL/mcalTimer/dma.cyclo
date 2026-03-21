@@ -1,6 +1,0 @@
-dma.c:36:21:timerEnableDMA	9
-dma.c:101:21:timerDisableDMA	9
-dma.c:171:22:timerSelectDMATriggerMode	3
-dma.c:217:22:timerSelectDmaTriggerOutput	9
-dma.c:289:21:timerSetDmaBurstStartingRegister	23
-dma.c:417:21:timerSetDmaBurstLength	21

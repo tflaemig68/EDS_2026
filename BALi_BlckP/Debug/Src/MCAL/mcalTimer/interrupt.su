@@ -1,4 +1,0 @@
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/interrupt.c:39:21:timerClearIrqFlag	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/interrupt.c:73:21:timerEnableInterrupt	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/interrupt.c:155:21:timerDisableInterrupt	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/interrupt.c:232:21:timerClearInterruptFlag	16	static

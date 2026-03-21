@@ -1,8 +1,0 @@
-mcalEXTI.c:37:6:extiVerifyIrqNum	23
-mcalEXTI.c:54:6:extiVerifyTrigger	4
-mcalEXTI.c:82:6:extiInit	2
-mcalEXTI.c:113:14:extiConfigIrq	13
-mcalEXTI.c:215:14:extiEnableIrq	2
-mcalEXTI.c:247:14:extiDisableIrq	2
-mcalEXTI.c:285:14:extiSetTriggerEdge	6
-mcalEXTI.c:336:6:extiResetPendingIRQ	1

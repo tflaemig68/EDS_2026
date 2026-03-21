@@ -1,4 +1,0 @@
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/deprecated.c:17:6:timerBusClkOn	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/deprecated.c:29:6:timerBusClkOff	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/deprecated.c:44:21:timerSetPreloadValue	24	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/deprecated.c:60:22:timerGetPreloadValue	24	static

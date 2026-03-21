@@ -1,8 +1,0 @@
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/verification.c:11:6:timerVerifyChannelNum	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/verification.c:23:6:timerVerifyIrqAssignment	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/verification.c:57:6:timerVerifyDmaAssignment	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/verification.c:70:6:timerVerifyCaptureCompareChannelAssignment	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/verification.c:93:6:timerVerifyTimerMSM	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/verification.c:107:6:timerVerifyTimerTriggerActionType	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/verification.c:119:6:timerVerifyTimerTrigger	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/verification.c:133:6:timerVerifyDmaBurstStartingRegister	16	static

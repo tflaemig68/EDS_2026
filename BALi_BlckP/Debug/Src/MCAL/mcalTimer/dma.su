@@ -1,6 +1,0 @@
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/dma.c:36:21:timerEnableDMA	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/dma.c:101:21:timerDisableDMA	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/dma.c:171:22:timerSelectDMATriggerMode	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/dma.c:217:22:timerSelectDmaTriggerOutput	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/dma.c:289:21:timerSetDmaBurstStartingRegister	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/dma.c:417:21:timerSetDmaBurstLength	24	static

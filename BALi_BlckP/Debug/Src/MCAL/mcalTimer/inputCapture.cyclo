@@ -1,7 +1,0 @@
-inputCapture.c:36:21:timerSetInputCapturePrescaler	23
-inputCapture.c:155:21:timerGetInputCapturePrescaler	7
-inputCapture.c:212:21:timerSetInputCaptureMode	23
-inputCapture.c:365:21:timerSetInputCaptureSamplingClkRatio	10
-inputCapture.c:431:21:timerGetInputCaptureSamplingClkRatio	8
-inputCapture.c:483:21:timerSelectInputCaptureTriggerInput	3
-inputCapture.c:528:21:timerSetInputCaptureFilter	83
