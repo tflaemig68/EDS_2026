@@ -16,13 +16,6 @@
 #include <adcBAT.h>
 #include "i2cDevices.h"   /* CheckAndInitI2cSlaves */
 
-/* ---------- Helpers defined in main.c ----------
- * They are defined in main.c
- * and called from BalancerUpdatePitch (RunInit) and BalancerUpdateDisplay.
- */
-extern void dispMPUBat(MPU6050_t* MPU1, analogCh_t* pADChn);
-extern void visualisationTOF(TOFSensor_t* TOFSENS);
-
 // *Timing
 #define StepTaskTimeSet 7UL			// the communication to stepper takes <1ms therefore total StepTaskTime = 7ms
 #define DistCtrlTaskTimeSet 7UL		// TODO: Adjust time for outer control loop
@@ -67,6 +60,18 @@ static const float defaultParam[PARAM_COUNT] = {
 		0.005f,   	// a_dKD PID_dist derivative gain
 		300.0f,  	// a_dSP distance setpoint [mm]
 		0.3f      	// a_dLPF MeanVal weight for TOF low-pass
+};
+
+static const char ParamTitle[PARAM_COUNT][5] = {
+	"MODE", "Cour", "poTo", "phiZ", "GyAc", "HwLP", "LP  ",
+	"piKP", "piKI", "piKD", "raRo", "maRo", "raTr",
+	"dKP ", "dKI ", "dKD ", "dSP ", "dLPF"
+};
+
+static const float ParamScale[PARAM_COUNT] = {
+	1,   1,   0.2,  500,  100,  1,    500,
+	100, 500,  100,  500,  1,    500,
+	500, 500,  500,  1,    500
 };
 
 // ******************** Method implementations ********************
@@ -152,6 +157,44 @@ static void BalancerInit(Balancer_t *b) {
 	b->DistCtrlTaskTimer = 0UL;
 }
 
+/* ---------- Display helpers (moved from main.c into balancer_t) ---------- */
+
+static void dispMPUBat(MPU6050_t *pMPU1, analogCh_t *pADChn)
+{
+    char strT[32];
+    float temp = mpuGetTemp(pMPU1);
+    BatStat_t batStatus = getBatVolt(pADChn);
+
+    if (batStatus == halfBat)       { tftSetColor(tft_BLACK, tft_YELLOW); }
+    else                            { tftSetColor(tft_WHITE, tft_RED);    }
+    if (batStatus == okBat)         { tftSetColor(tft_GREEN, tft_BLACK);  }
+
+    sprintf(strT, "T:%+3.1f Bat:%3.1fV", temp, pADChn->BatVolt);
+    tftPrint((char *)strT, 10, 110, 0);
+}
+
+static void visualisationTOF(TOFSensor_t *TOFSENS)
+{
+    char buffer[8];
+    static uint16_t oldDistance = TOF_VL53L0X_OUT_OF_RANGE;
+
+    if (TOFSENS->distanceFromTOF != TOF_VL53L0X_OUT_OF_RANGE)
+    {
+        if (oldDistance == TOF_VL53L0X_OUT_OF_RANGE)
+            tftPrint((char *)"  cm        ", 0, 94, 0);
+        if ((int16_t)fabs((float)TOFSENS->distanceFromTOF - (float)oldDistance) > 10)
+        {
+            sprintf(buffer, "%02d", TOFSENS->distanceFromTOF / 10);
+            tftPrint(buffer, 0, 94, 0);
+        }
+    }
+    else
+    {
+        tftPrint((char *)"out of range", 0, 94, 0);
+    }
+    oldDistance = TOFSENS->distanceFromTOF;
+}
+
 /* ----- core inner balance loop -----
  * translation of case M_Bala from reference
  * RunInit, IMU read + fall detection, check if balance action needed, active PID balancing with stepper commands
@@ -178,6 +221,14 @@ static void BalancerUpdatePitch(Balancer_t *b) {
 		PID.init(&b->PID_phi,
 				 b->ParamValue[a_piKP], b->ParamValue[a_piKI],
 				 b->ParamValue[a_piKD], 1.0f);
+
+		// HwLP: config MPU low pass filter
+		MPUlpbw tableLPFValue[7] = {LPBW_260, LPBW_184, LPBW_94, LPBW_44, LPBW_21, LPBW_10, LPBW_5};
+
+		if (b->ParamValue[a_HwLP] < 0) b->ParamValue[a_HwLP] = 0;
+		if (b->ParamValue[a_HwLP] > 6) b->ParamValue[a_HwLP] = 6;
+		b->pIMU->LowPassFilt = tableLPFValue[(uint8_t)b->ParamValue[a_HwLP]];
+		mpuSetLpFilt(b->pIMU);
 
 		// set MPU assemble
 		b->pIMU->RPY[0] = 2;			// MPU y Axis goes to the front
@@ -275,7 +326,23 @@ static void BalancerUpdateDist(Balancer_t *b) {
 }
 
 static void BalancerUpdateDisplay(Balancer_t *b) {
-	/* update display */
+	/* TOF distance visualisation (reference lines 748–755) */
+	if ((b->devMask & DevTOF1) != 0) {
+		if (TOF_read_distance_task(b->pTOF)) {
+			visualisationTOF(b->pTOF);
+		}
+	}
+
+	/* Battery + temperature (reference lines 834–841)
+	 * Show in diagnostic modes and in M_Bala when not actively moving */
+	if ((b->TaskMode == M_DispMpuData)||
+		(b->TaskMode == M_DispTofData)||
+		(b->TaskMode == M_StepFollowPitch)||
+	    ((b->TaskMode == M_Bala)&&(b->activeMove != true))
+		)
+	{
+		dispMPUBat(b->pIMU, b->pBatADC);
+	}
 }
 
 /* ---------- Param editing ---------- */
@@ -308,7 +375,7 @@ static void applyParams(Balancer_t *b) {
 }
 
 /* Parameter editor — polls rotary encoder and push button. */
-/* static void BalancerParamEdit(Balancer_t *b) {
+static void BalancerParamEdit(Balancer_t *b) {
 	int ButtPos;
 	static int oldButtPos = 0;
 	static int modif = 0;          // index of currently selected parameter
@@ -352,7 +419,7 @@ static void applyParams(Balancer_t *b) {
 		applyParams(b);
 	}
 }
-*/
+
 
 /* ---------- Vtable instance ---------- */
 // Connecting pointers to functions - NO static -> visible outside .c File
@@ -361,7 +428,7 @@ const Balancer_t Balancer = {
     .updatePitch   = BalancerUpdatePitch,
     .updateDist    = BalancerUpdateDist,
 	.updateDisplay = BalancerUpdateDisplay,
-	// .paramEdit     = BalancerParamEdit,
+	.paramEdit     = BalancerParamEdit,
 };
 
 /* ---------- Constructor ---------- */

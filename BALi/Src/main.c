@@ -4,30 +4,6 @@
  * @author         : Luis Brunn / based on reference main by Prof Flaemig
  * @brief          : Main for new balancer_t OOP architecture
  ******************************************************************************
- *
- * LEARNINGS ADDRESSED IN THIS FILE:
- *
- * 1. CheckAndInitI2cSlaves MUST be the original multi-call state machine.
- *    Called repeatedly (every 50ms) — each call does one I2C init step.
- *    Static CycleRun tracks progress across calls (-4 to 0).
- *    A single-call replacement floods the I2C bus and breaks timing.
- *
- * 2. mpuInit() unconditionally resets RPY={1,2,-3}, pitchFilt=0.9,
- *    swLowPassFilt=0.5, pitch=0 at the TOP of EVERY call.
- *    The correct values (RPY={2,3,-1}, pitchFilt=0.98, etc.) are set
- *    in BalancerUpdatePitch's RunInit block AFTER all mpuInit calls finish.
- *    CycleRun ensures exactly 3 mpuInit calls, then stops.
- *
- * 3. All 7 TOF references inside CheckAndInitI2cSlaves use pTOF1
- *    parameter, not the global TOF1.
- *
- * 4. balancer_t.c vtable has .paramEdit commented out (NULL).
- *    This file guards the call with a NULL check.
- *
- * 5. BALA_DEBUG: set to 1 to show RPY, pitch, pitchFilt, timebase
- *    and mpuInit call count on TFT.  Set to 0 for production.
- *
- ******************************************************************************
  */
 
 #include <stdint.h>
@@ -49,18 +25,14 @@
 
 #include "i2cDevices.h"
 
-/* ====================================================================== */
-/* Debug toggle: 1 = TFT debug prints, 0 = production                    */
-/* ====================================================================== */
-#define BALA_DEBUG  1
+/* ----------- Debug toggle: 1 = TFT debug prints, 0 = production ----------- */
+#define BALA_DEBUG  0
 
-/* ====================================================================== */
-/* Globals                                                                */
-/* ====================================================================== */
+
 bool timerTrigger = false;
 uint32_t ST7735_Timer = 0UL;
 
-/* Hardware object instances */
+/* ----------- Hardware object instances ----------- */
 static MPU6050_t   MPU1;
 static TOFSensor_t TOF1;
 static Stepper_t   StepL;
@@ -68,9 +40,7 @@ static Stepper_t   StepR;
 static analogCh_t  adChn;
 static Balancer_t  bala;
 
-/* ====================================================================== */
-/* Constants for CheckAndInitI2cSlaves                                    */
-/* ====================================================================== */
+/* ----------- Constants for CheckAndInitI2cSlaves ----------- */
 #define i2cAddr_motL  0x61
 #define i2cAddr_motR  0x60
 #define i2cAddr_TOF1  0x29
@@ -81,55 +51,11 @@ static const uint8_t stepMode   = 3;
 static const bool    stepRotDir = true;
 static uint16_t TOF_DISTANCE_1  = 10;
 
-/* ====================================================================== */
-/* Private prototypes                                                     */
-/* ====================================================================== */
+/* ----------- Private prototypes ----------- */
 static int  CheckAndInitI2cSlaves(uint8_t *DevMask,
                                   Stepper_t *pStepL, Stepper_t *pStepR,
                                   MPU6050_t *pMPU1, TOFSensor_t *pTOF1);
 static void DispAlphaNumMPU(MPU6050_t *pMPU);
-
-/* ====================================================================== */
-/* Helpers required by balancer_t.c (extern declared there)               */
-/* ====================================================================== */
-void dispMPUBat(MPU6050_t *pMPU1, analogCh_t *pADChn)
-{
-    char strT[32];
-    float temp = mpuGetTemp(pMPU1);
-    BatStat_t batStatus = getBatVolt(pADChn);
-
-    if (batStatus == halfBat)       { tftSetColor(tft_BLACK, tft_YELLOW); }
-    else                            { tftSetColor(tft_WHITE, tft_RED);    }
-    if (batStatus == okBat)         { tftSetColor(tft_GREEN, tft_BLACK);  }
-
-    sprintf(strT, "T:%+3.1f Bat:%3.1fV", temp, pADChn->BatVolt);
-    tftPrint((char *)strT, 10, 110, 0);
-}
-
-void visualisationTOF(TOFSensor_t *TOFSENS)
-{
-    char buffer[8];
-    static uint16_t oldDistance = TOF_VL53L0X_OUT_OF_RANGE;
-
-    if (TOFSENS->distanceFromTOF != TOF_VL53L0X_OUT_OF_RANGE)
-    {
-        if (oldDistance == TOF_VL53L0X_OUT_OF_RANGE)
-        {
-            tftPrint((char *)"  cm        ", 0, 94, 0);
-        }
-        if ((int16_t)fabs((float)TOFSENS->distanceFromTOF
-                          - (float)oldDistance) > 10)
-        {
-            sprintf(buffer, "%02d", TOFSENS->distanceFromTOF / 10);
-            tftPrint(buffer, 0, 94, 0);
-        }
-    }
-    else
-    {
-        tftPrint((char *)"out of range", 0, 94, 0);
-    }
-    oldDistance = TOFSENS->distanceFromTOF;
-}
 
 static void DispAlphaNumMPU(MPU6050_t *pMPU)
 {
@@ -140,22 +66,16 @@ static void DispAlphaNumMPU(MPU6050_t *pMPU)
     sprintf(str, "%+6.3f", pMPU->accel[2]); tftPrint(str, 20, 70, 0);
 }
 
-
-/* ====================================================================== */
-/* CheckAndInitI2cSlaves                                                  */
+/* ----------- CheckAndInitI2cSlaves ----------- */
 /*                                                                        */
 /* Exact replica of reference_old_main.c lines 284–414.                   */
-/* 7 TOF global refs fixed to use pTOF1 parameter.                        */
-/* Debug instrumentation: counts mpuInit calls (expect exactly 3).        */
-/*                                                                        */
-/* Call sequence (one call per 50ms StepTask tick in M_CheckI2cSlaves):    */
-/*   Call 1  CycleRun==-4 : StepL find+init, CycleRun++ → -3, return     */
+/* Call sequence (one call per 50ms StepTask tick in M_CheckI2cSlaves):   */
+/*   Call 1  CycleRun==-4 : StepL find+init, CycleRun++ -3, return        */
 /*   Call 2  CycleRun==-3 : StepR init (falls thru) + TOF detect          */
-/*                          + MPU detect + mpuInit#1 → CycleRun=-2        */
-/*   Call 3  CycleRun==-2 : TOF_init_device + mpuInit#2 → CycleRun=-1    */
-/*   Call 4  CycleRun==-1 : TOF config+start + mpuInit#3 → CycleRun=0    */
-/*   Main loop sees return==0, all devMask bits set → enters M_Bala       */
-/* ====================================================================== */
+/*                          + MPU detect + mpuInit#1 CycleRun=-2          */
+/*   Call 3  CycleRun==-2 : TOF_init_device + mpuInit#2 CycleRun=-1       */
+/*   Call 4  CycleRun==-1 : TOF config+start + mpuInit#3 CycleRun=0       */
+/*   Main loop sees return==0, all devMask bits set enters M_Bala         */
 static int CheckAndInitI2cSlaves(uint8_t *DevMask,
                                  Stepper_t *pStepL, Stepper_t *pStepR,
                                  MPU6050_t *pMPU1, TOFSensor_t *pTOF1)
@@ -211,7 +131,7 @@ static int CheckAndInitI2cSlaves(uint8_t *DevMask,
         return (CycleRun);
     }
 
-    /* CycleRun == -3: RIGHT stepper — no guard, no return (falls through!) */
+    /* CycleRun == -3: RIGHT stepper — no guard, no return */
     if ((*DevMask & DevStepR) == 0)
     {
         foundAddr = i2cFindSlaveAddr(i2cSTEP, i2cAddr_motR);
@@ -320,9 +240,9 @@ static int CheckAndInitI2cSlaves(uint8_t *DevMask,
     return (CycleRun);
 }
 
-/* ====================================================================== */
-/* main                                                                   */
-/* ====================================================================== */
+/* -------------------------------------- */
+/* main                                   */
+/* -------------------------------------- */
 int main(void)
 {
     int  I2cCheckResult = -1;
@@ -330,7 +250,7 @@ int main(void)
 
     adChn.adc = ADC1;
 
-    /* ---- Peripheral init (same order as reference lines 480-511) ---- */
+    /* Peripheral init (same order as reference lines 480-511) */
     initLED(&LEDbala);
     activateI2C1();
     activateI2C2();
@@ -347,10 +267,10 @@ int main(void)
 
     initRotaryPushButton(&PuBio_bala);
 
-    /* ---- Build Balancer object ---- */
+    /* Build Balancer object */
     BalancerCreate(&bala, &MPU1, &TOF1, &StepL, &StepR, &adChn);
 
-    /* ---- Timer list ---- */
+    /* Timer list */
     uint32_t *timerList[] = {
         &bala.StepTaskTimer,
         &ST7735_Timer,
@@ -366,7 +286,7 @@ int main(void)
     setLED(RED_off);
     tftPrintColor((char *)"I2C Scanner running", 0, 0, tft_MAGENTA);
 
-    /* ==================== MAIN LOOP ==================== */
+    /* ---------------------- MAIN LOOP ---------------------- */
     while (1)
     {
         if (timerTrigger)
@@ -374,13 +294,9 @@ int main(void)
             systickUpdateTimerList((uint32_t *)timerList, arraySize);
         }
 
-        /* ParamEdit — guarded because vtable entry is currently NULL */
-        if (bala.paramEdit != NULL)
-        {
-            bala.paramEdit(&bala);
-        }
+        bala.paramEdit(&bala);
 
-        /* ==================== StepTask ==================== */
+        /* ---------------------- StepTask ---------------------- */
         if (isSystickExpired(bala.StepTaskTimer))
         {
             systickSetTicktime(&bala.StepTaskTimer,
@@ -406,7 +322,7 @@ int main(void)
                         bala.pStepL, bala.pStepR,
                         bala.pIMU, bala.pTOF);
 
-                    /* All three required devices present → balance */
+                    /* All three required devices present: balance */
                     if ((I2cCheckResult == 0) &&
                         (bala.devMask & DevMPU1) &&
                         (bala.devMask & DevStepL) &&
@@ -450,10 +366,7 @@ int main(void)
                 case M_DispTofData:
                 {
                     setLED(WHITE);
-                    if (TOF_read_distance_task(bala.pTOF))
-                    {
-                        visualisationTOF(bala.pTOF);
-                    }
+                    bala.updateDisplay(&bala);
                     setLED(BLUE);
                 }
                 break;
@@ -464,6 +377,7 @@ int main(void)
 
 #if BALA_DEBUG
                     /* Show MPU config + live pitch every ~700ms */
+                    /* ATTENTION: makes balancing slightly unstable: Falls possible */
                     {
                         static int dbgCnt = 0;
                         if (++dbgCnt >= 100)
@@ -520,18 +434,12 @@ int main(void)
             }
         } /* end StepTask */
 
-        /* ==================== DispTask (700 ms) ==================== */
+        /* ---------------------- DispTask (700 ms) ---------------------- */
         if (isSystickExpired(bala.DispTaskTimer))
         {
             systickSetTicktime(&bala.DispTaskTimer, 700UL);
-
-            if (bala.devMask & DevMPU1)
-            {
-                dispMPUBat(bala.pIMU, bala.pBatADC);
-            }
-
             bala.updateDisplay(&bala);
         }
 
-    } /* end while(1) */
+    }
 }
