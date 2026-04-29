@@ -32,6 +32,7 @@
  * The actual values and the #defines they reference belong in balancer_t.c
  */
 extern uint32_t StepTaskTime[];
+extern uint32_t DistCtrlTaskTimeMs;
 
 /**
  * typedef for Task-Modes
@@ -54,7 +55,7 @@ typedef enum
  *  First 13 = original main.c params from argParam (unchanged).
  *  Last 5  = new distance control params.
  */
-#define PARAM_COUNT  18
+#define PARAM_COUNT  25
 
 typedef enum {
     /* same order as original ParamValue[] */
@@ -77,6 +78,13 @@ typedef enum {
     a_dKD,         // PID_dist derivative gain
     a_dSP,         // distance setpoint [mm]
     a_dLPF,        // MeanVal weight for TOF low-pass filter
+    a_distBlind,   // [mm] used when TOF out of range
+    a_vKP,         // PID_velo proportional gain
+    a_vKI,         // PID_velo integral gain
+    a_vKD,         // PID_velo derivative gain
+    a_vMax,        // velocity clamp [mm/s]
+    a_a2p,         // accel-to-pitch gain
+    a_pClamp,      // variable pitch clamp [rad]
 } ParamIdx;
 
 // ******************** Predeclare Balancer Type ********************
@@ -102,11 +110,20 @@ struct Balancer {
 	/* ---------- Control Objects ---------- */
 	PIDContr_t PID_phi;
 	PIDContr_t PID_dist;
+	PIDContr_t PID_velo;
 	MeanVal_t LPF_dist;
 
 	/* ---------- Operating variables/stated/modes ---------- */
-	float pitchOffset;	// output of PID_dist [rad]
-	float distSetpoint;	// target distance [mm]
+	float pitchOffset;		// output of PID_dist [rad]
+	float distSetpoint;		// target distance [mm]
+	float tarVelo;          // clamped target velocity [mm/s]
+	float veloMeas;         // fused velocity measurement [mm/s]
+	float prevDist;         // previous filtered dist for derivative
+	float veloL;            // left wheel velocity [mm/s]
+	float veloR;            // right wheel velocity [mm/s]
+	int16_t prevPosL;       // previous left motor position [steps]
+	int16_t prevPosR;       // previous right motor position [steps]
+	float accel2pitchK;     // conversion factor
 	float incRot;
 	float rampRot;
 	float tarPosL;
@@ -145,6 +162,7 @@ struct Balancer {
     void (*updateDist) (Balancer_t *b);
     void (*updateDisplay)(Balancer_t *b);
     void (*paramEdit) (Balancer_t *b);
+    void (*DispAlphaNumMPU)(Balancer_t *b);
 
 };
 

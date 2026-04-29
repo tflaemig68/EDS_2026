@@ -18,15 +18,20 @@
 
 // *Timing
 #define StepTaskTimeSet 7UL			// the communication to stepper takes <1ms therefore total StepTaskTime = 7ms
-#define DistCtrlTaskTimeSet 7UL		// TODO: Adjust time for outer control loop
+#define DistCtrlTaskTimeSet 49UL	// TODO: Adjust time for outer control loop (now 7x StepTaskTimeSet)
 #define DispTaskTimeSet 700UL		// Task for Position control and Display Status
+
+#define TA_INNER ((float)StepTaskTimeSet    * 1e-3f)   // 0.007 s
+#define TA_OUTER ((float)DistCtrlTaskTimeSet * 1e-3f)  // 0.049 s
+
+uint32_t DistCtrlTaskTimeMs = DistCtrlTaskTimeSet;
 
 uint32_t StepTaskTime[] = {
   50UL, 50UL, 100UL, 50UL,
   StepTaskTimeSet,
   StepTaskTimeSet,
   StepTaskTimeSet,
-  DistCtrlTaskTimeSet
+  StepTaskTimeSet
 };
 
 //* Stepper motors position conversion
@@ -35,7 +40,7 @@ const int16_t rad2step = 520;		// Ratio step-counts (200 Full-Steps div 1/16 Ste
 //* Fall detection
 #define PITCH_FALL_RAD 0.35f  		// |pitch| > this → robot fallen
 #define PITCH_ACTIVE 0.05f  		// |pitch| < this → balanced
-#define PITCH_CLAMP 0.05f  			// max |pitchOffset| from outer loop
+
 
 // ******************** Set default params ********************
 static const float defaultParam[PARAM_COUNT] = {
@@ -48,30 +53,47 @@ static const float defaultParam[PARAM_COUNT] = {
 		5,        	// a_HwLP hardware DLPF index (→ LPBW_10)
 		0.36f,    	// a_LP software accel low-pass weight
 		0.75f,    	// a_piKP PID_phi proportional gain
-		0.058f,   	// a_piKI PID_phi integral gain
-		0.27f,    	// a_piKD PID_phi derivative gain
+		0.058f / TA_INNER,   	// a_piKI PID_phi integral gain
+		0.27f * TA_INNER,    	// a_piKD PID_phi derivative gain
 		0.002f,   	// a_raRo rotation ramp increment per cycle
 		10.0f,    	// a_maRo max rotation increment (clamp)
 		0.01f,    	// a_raTr translation ramp (reserved)
 
 		/* New params for distance control */
-		0.01f,    	// a_dKP PID_dist proportional gain
-		0.001f,   	// a_dKI PID_dist integral gain
-		0.005f,   	// a_dKD PID_dist derivative gain
-		300.0f,  	// a_dSP distance setpoint [mm]
-		0.3f      	// a_dLPF MeanVal weight for TOF low-pass
+		0.5f,    	// a_dKP PID_dist proportional gain
+		0.000f,   	// a_dKI PID_dist integral gain
+		0.00f,   	// a_dKD PID_dist derivative gain
+		280.0f,  	// a_dSP distance setpoint [mm]
+		0.2f,      	// a_dLPF MeanVal weight for TOF low-pass
+		100.0f,		// dist_blind [mm] -> dist used when TOF out of range
+		0.00f,     // a_vKP
+		0.00f,    // a_vKI
+		0.00f,     // a_vKD
+		2000.0f,      // a_vMax [mm/s]
+		0.000102f,       // a_a2p accel2pitch gain
+		0.05f,      // a_pClamp variable pitch clamp [rad], replaces fixed PITCH_CLAMP
 };
 
 static const char ParamTitle[PARAM_COUNT][5] = {
 	"MODE", "Cour", "poTo", "phiZ", "GyAc", "HwLP", "LP  ",
 	"piKP", "piKI", "piKD", "raRo", "maRo", "raTr",
-	"dKP ", "dKI ", "dKD ", "dSP ", "dLPF"
+	"dKP ", "dKI ", "dKD ", "dSP ", "dLPF", "dBli",
+	"vKP ", "vKI ", "vKD ", "vMax", "a2p ", "pClp"
 };
 
 static const float ParamScale[PARAM_COUNT] = {
-	1,   1,   0.2,  500,  100,  1,    500,
-	100, 500,  100,  500,  1,    500,
-	500, 500,  500,  1,    500
+    1,   1,   0.2,  500,  100,  1,    500,
+    100, 500,  100,  500,  1,    500,
+    /* Distance loop with new units */
+    20,    // a_dKP    inc 0.05    range 0.1–3.0
+    1000,  // a_dKI    inc 0.001   range 0–0.05
+    100,   // a_dKD    inc 0.01    range 0–0.5
+    0.1,   // a_dSP    inc 10mm    range 100–800
+    100,   // a_dLPF   inc 0.01    range 0.05–0.5
+    0.1,   // a_distBlind inc 10mm range 50–200
+    /* Velocity loop (still unused in 2-loop test) */
+    10000, 100000, 10000, 0.5,
+    100000, 1000
 };
 
 // ******************** Method implementations ********************
@@ -115,13 +137,16 @@ static void BalancerInit(Balancer_t *b) {
 		b->ParamValue[i] = defaultParam[i];
 	}
 
-	/* Init PID controllers (TA = 1.0f) */
+	/* Init PID controllers */
     PID.init(&b->PID_phi,
              b->ParamValue[a_piKP], b->ParamValue[a_piKI],
-             b->ParamValue[a_piKD], 1.0f);
+             b->ParamValue[a_piKD], TA_INNER);
     PID.init(&b->PID_dist,
              b->ParamValue[a_dKP], b->ParamValue[a_dKI],
-             b->ParamValue[a_dKD], 1.0f);
+             b->ParamValue[a_dKD], TA_OUTER);
+    PID.init(&b->PID_velo,
+             b->ParamValue[a_vKP], b->ParamValue[a_vKI],
+             b->ParamValue[a_vKD], TA_OUTER);
 
     /* Init / clear Low Pass Filter for TOF distance measurement */
     MeanVALclr(&b->LPF_dist, b->ParamValue[a_dLPF]);
@@ -143,6 +168,14 @@ static void BalancerInit(Balancer_t *b) {
 	b->distSetpoint      = b->ParamValue[a_dSP];
 	b->tarPosL           = 0.0f;
 	b->tarPosR           = 0.0f;
+	b->tarVelo    		 = 0.0f;
+	b->veloMeas  		 = 0.0f;
+	b->prevDist  		 = 0.0f;
+	b->veloL      		 = 0.0f;
+	b->veloR     		 = 0.0f;
+	b->prevPosL  		 = 0;
+	b->prevPosR   		 = 0;
+	b->accel2pitchK = b->ParamValue[a_a2p];
 	b->targetTra         = 0.0f;
 	b->targetRot         = 0.0f;
 	b->curMotL           = 0;
@@ -173,6 +206,15 @@ static void dispMPUBat(MPU6050_t *pMPU1, analogCh_t *pADChn)
     tftPrint((char *)strT, 10, 110, 0);
 }
 
+static void BalancerDispAlphaNumMPU(Balancer_t *b)
+{
+    char str[16];
+    mpuGetAccel(b->pIMU);
+    sprintf(str, "%+6.3f", b->pIMU->accel[0]); tftPrint(str, 20, 50, 0);
+    sprintf(str, "%+6.3f", b->pIMU->accel[1]); tftPrint(str, 20, 60, 0);
+    sprintf(str, "%+6.3f", b->pIMU->accel[2]); tftPrint(str, 20, 70, 0);
+}
+
 static void visualisationTOF(TOFSensor_t *TOFSENS)
 {
     char buffer[8];
@@ -181,7 +223,7 @@ static void visualisationTOF(TOFSensor_t *TOFSENS)
     if (TOFSENS->distanceFromTOF != TOF_VL53L0X_OUT_OF_RANGE)
     {
         if (oldDistance == TOF_VL53L0X_OUT_OF_RANGE)
-            tftPrint((char *)"  cm        ", 0, 94, 0);
+        	tftPrint((char *)"cm ", 24, 94, 0);
         if ((int16_t)fabs((float)TOFSENS->distanceFromTOF - (float)oldDistance) > 10)
         {
             sprintf(buffer, "%02d", TOFSENS->distanceFromTOF / 10);
@@ -220,7 +262,7 @@ static void BalancerUpdatePitch(Balancer_t *b) {
 		b->pIMU->pitchFilt = b->ParamValue[a_GyAc];
 		PID.init(&b->PID_phi,
 				 b->ParamValue[a_piKP], b->ParamValue[a_piKI],
-				 b->ParamValue[a_piKD], 1.0f);
+				 b->ParamValue[a_piKD], TA_INNER);
 
 		// HwLP: config MPU low pass filter
 		MPUlpbw tableLPFValue[7] = {LPBW_260, LPBW_184, LPBW_94, LPBW_44, LPBW_21, LPBW_10, LPBW_5};
@@ -252,7 +294,12 @@ static void BalancerUpdatePitch(Balancer_t *b) {
 		// Re-init PID to clear integral windup
 		PID.init(&b->PID_phi,
 				b->ParamValue[a_piKP], b->ParamValue[a_piKI],
-				b->ParamValue[a_piKD], 1.0f);
+				b->ParamValue[a_piKD], TA_INNER);
+
+		PIDclear(&b->PID_dist);
+		PIDclear(&b->PID_velo);
+		b->pitchOffset = 0.0f;
+		b->tarVelo = 0.0f;
 
 		StepperIHold(b, false);         // reduce current to save power
 		b->incRot     = 0;
@@ -278,7 +325,15 @@ static void BalancerUpdatePitch(Balancer_t *b) {
 
 	/* Active PID balancing with stepper commands */
 	if (b->activeMove) {
-		float setPitch = (float)rad2step * PID.run(&b->PID_phi, pitch);
+		// Clamp pitchOffset so outer loop cannot destabilise the inner loop
+		float offset = b->pitchOffset;
+		float pClamp = b->ParamValue[a_pClamp];
+		if (offset >  pClamp) offset =  pClamp;
+		if (offset < -pClamp) offset = -pClamp;
+
+		// Inner loop error: positive offset leans forward (closing distance)
+		float error_phi = pitch - offset;
+		float setPitch  = (float)rad2step * PID.run(&b->PID_phi, error_phi);
 
 		// Rotation ramp
 		if (b->rampRot < 1.0f) {
@@ -319,10 +374,76 @@ static void BalancerUpdatePitch(Balancer_t *b) {
 	setLED(RED_off);
 }
 
-static void BalancerUpdateDist(Balancer_t *b) {
-	/* update dist measurement from TOF and calculate dist error */
-	// Read TOF, filter, run PID_dist
+static void BalancerUpdateDist(Balancer_t *b)
+{
+    /* ----- 1. TOF read ----- */
+    if (!TOF_read_distance_task(b->pTOF)) return;
 
+    uint16_t rawDist = b->pTOF->distanceFromTOF;
+
+    /* TOF switch */
+    bool tofValid = (rawDist != TOF_VL53L0X_OUT_OF_RANGE) &&
+                    ((float)rawDist > b->ParamValue[a_distBlind]);
+
+    float dist;
+    float distanceVelo;
+
+    if (tofValid) {
+        dist = MeanVALrun(&b->LPF_dist, (float)rawDist);
+
+        /* First valid reading: seed prevDist + motor positions, skip output */
+        if (b->prevDist == 0.0f) {
+            b->prevDist = dist;
+            b->prevPosL = (int16_t)StepperGetPos(b->pStepL);
+            b->prevPosR = (int16_t)StepperGetPos(b->pStepR);
+            return;
+        }
+
+        distanceVelo = (b->prevDist - dist) / TA_OUTER;
+        b->prevDist  = dist;
+    } else {
+        /* Freeze: hold last filtered dist, zero velocity, bleed integrals */
+        dist         = b->prevDist;
+        distanceVelo = 0.0f;
+        PIDclear(&b->PID_velo);
+    }
+
+    /* ----- 2. Outer loop: distance error to target velocity ----- */
+    float error_dist = dist - b->distSetpoint;
+    b->tarVelo = PID.run(&b->PID_dist, error_dist);
+
+    /* Velocity clamp */
+    float vMax = b->ParamValue[a_vMax];
+    if (b->tarVelo >  vMax) b->tarVelo =  vMax;
+    if (b->tarVelo < -vMax) b->tarVelo = -vMax;
+
+
+    /* ----- 3. Velocity measurement ----- */
+    #define WHEEL_CIRC_MM   375.0f
+    #define STEPS_PER_REV   3200.0f
+    #define STEP_TO_MM_S    (WHEEL_CIRC_MM / STEPS_PER_REV / TA_OUTER)
+
+    int16_t curPosL = (int16_t)StepperGetPos(b->pStepL);
+    int16_t curPosR = (int16_t)StepperGetPos(b->pStepR);
+
+    b->veloL = (float)(curPosL - b->prevPosL) * STEP_TO_MM_S;
+    b->veloR = (float)(curPosR - b->prevPosR) * STEP_TO_MM_S;
+
+    b->prevPosL = curPosL;
+    b->prevPosR = curPosR;
+
+    float translationVeloMean = 0.5f * (b->veloL + b->veloR);
+
+    /* switch: pick the source with larger magnitude */
+    b->veloMeas = (fabsf(translationVeloMean) >= fabsf(distanceVelo))
+                  ? translationVeloMean
+                  : distanceVelo;
+
+    /* ----- 4. Middle loop: velocity error to target acceleration ----- */
+    float error_velo = b->tarVelo - b->veloMeas;
+    float tarAccel   = PID.run(&b->PID_velo, error_velo);
+
+    b->pitchOffset = tarAccel * b->accel2pitchK;
 }
 
 static void BalancerUpdateDisplay(Balancer_t *b) {
@@ -360,7 +481,18 @@ static void applyParams(Balancer_t *b) {
 
 	PID.init(&b->PID_phi,
 	         b->ParamValue[a_piKP], b->ParamValue[a_piKI],
-	         b->ParamValue[a_piKD], 1.0f);
+	         b->ParamValue[a_piKD], TA_INNER);
+
+	PID.init(&b->PID_dist,
+	         b->ParamValue[a_dKP], b->ParamValue[a_dKI],
+	         b->ParamValue[a_dKD], TA_OUTER);
+	b->distSetpoint = b->ParamValue[a_dSP];
+	MeanVALclr(&b->LPF_dist, b->ParamValue[a_dLPF]);
+
+	PID.init(&b->PID_velo,
+	         b->ParamValue[a_vKP], b->ParamValue[a_vKI],
+	         b->ParamValue[a_vKD], TA_OUTER);
+	b->accel2pitchK = b->ParamValue[a_a2p];
 
 	/* Clamp hardware low-pass index to valid range 0–6 */
 	if (b->ParamValue[a_HwLP] < 0) b->ParamValue[a_HwLP] = 0;
@@ -392,8 +524,13 @@ static void BalancerParamEdit(Balancer_t *b) {
 		// Mode switch: if a_MODE was set to a non-zero value,
 		// apply it as the new TaskMode (same mechanism as original)
 		if ((modif > 0) && (b->ParamValue[a_MODE] > 0)) {
-			b->TaskMode = (TaskModus)b->ParamValue[a_MODE];
-			b->ParamValue[a_MODE] = 0;
+		    b->TaskMode = (TaskModus)b->ParamValue[a_MODE];
+		    b->RunInit  = true;
+		    b->pitchOffset = 0.0f;
+		    b->tarVelo     = 0.0f;
+		    PIDclear(&b->PID_dist);
+		    PIDclear(&b->PID_velo);
+		    b->ParamValue[a_MODE] = 0;
 		}
 
 		// Display current parameter name and value
@@ -428,7 +565,9 @@ const Balancer_t Balancer = {
     .updatePitch   = BalancerUpdatePitch,
     .updateDist    = BalancerUpdateDist,
 	.updateDisplay = BalancerUpdateDisplay,
+	.DispAlphaNumMPU = BalancerDispAlphaNumMPU,
 	.paramEdit     = BalancerParamEdit,
+
 };
 
 /* ---------- Constructor ---------- */

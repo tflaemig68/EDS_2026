@@ -51,20 +51,10 @@ static const uint8_t stepMode   = 3;
 static const bool    stepRotDir = true;
 static uint16_t TOF_DISTANCE_1  = 10;
 
-/* ----------- Private prototypes ----------- */
+/* ----------- Private prototype ----------- */
 static int  CheckAndInitI2cSlaves(uint8_t *DevMask,
                                   Stepper_t *pStepL, Stepper_t *pStepR,
                                   MPU6050_t *pMPU1, TOFSensor_t *pTOF1);
-static void DispAlphaNumMPU(MPU6050_t *pMPU);
-
-static void DispAlphaNumMPU(MPU6050_t *pMPU)
-{
-    char str[16];
-    mpuGetAccel(pMPU);
-    sprintf(str, "%+6.3f", pMPU->accel[0]); tftPrint(str, 20, 50, 0);
-    sprintf(str, "%+6.3f", pMPU->accel[1]); tftPrint(str, 20, 60, 0);
-    sprintf(str, "%+6.3f", pMPU->accel[2]); tftPrint(str, 20, 70, 0);
-}
 
 /* ----------- CheckAndInitI2cSlaves ----------- */
 /*                                                                        */
@@ -281,7 +271,7 @@ int main(void)
 
     systickSetMillis(&bala.StepTaskTimer,     StepTaskTime[M_InitBat]);
     systickSetMillis(&bala.DispTaskTimer,      700UL);
-    systickSetMillis(&bala.DistCtrlTaskTimer,  StepTaskTime[M_DistCtrl]);
+    systickSetMillis(&bala.DistCtrlTaskTimer, DistCtrlTaskTimeMs);
 
     setLED(RED_off);
     tftPrintColor((char *)"I2C Scanner running", 0, 0, tft_MAGENTA);
@@ -359,7 +349,7 @@ int main(void)
 
                 case M_DispMpuData:
                 {
-                    DispAlphaNumMPU(bala.pIMU);
+                    bala.DispAlphaNumMPU(&bala);
                 }
                 break;
 
@@ -377,7 +367,7 @@ int main(void)
 
 #if BALA_DEBUG
                     /* Show MPU config + live pitch every ~700ms */
-                    /* ATTENTION: makes balancing slightly unstable: Falls possible */
+                    /* ATTENTION: makes balancing slightly unstable (long write times): Falls possible */
                     {
                         static int dbgCnt = 0;
                         if (++dbgCnt >= 100)
@@ -416,8 +406,7 @@ int main(void)
 
                     if (isSystickExpired(bala.DistCtrlTaskTimer))
                     {
-                        systickSetTicktime(&bala.DistCtrlTaskTimer,
-                                           StepTaskTime[M_DistCtrl]);
+                    	systickSetTicktime(&bala.DistCtrlTaskTimer, DistCtrlTaskTimeMs);
                         bala.updateDist(&bala);
                     }
                 }
