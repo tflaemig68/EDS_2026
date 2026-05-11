@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['x_5fsize_0',['x_size',['../struct__font.html#a57df52e64c37e8a4e1456ae91f32f50f',1,'_font']]]
+  ['updatedisplay_0',['updateDisplay',['../struct_balancer.html#a251aa612f148721d51cf9a83c254306c',1,'Balancer']]],
+  ['updatedist_1',['updateDist',['../struct_balancer.html#a32bd1a1a485704fc2835a27205b56763',1,'Balancer']]],
+  ['updatepitch_2',['updatePitch',['../struct_balancer.html#a327e794d9ccaff6b83747cb4ad8fc663',1,'Balancer']]]
 ];

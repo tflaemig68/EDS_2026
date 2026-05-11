@@ -1,7 +1,6 @@
 var i2c_a_m_i_s_8c =
 [
     [ "getAccel", "i2c_a_m_i_s_8c.html#a1329c6e31712e7e1fb4eebc9f680930b", null ],
-    [ "getAccelShape", "i2c_a_m_i_s_8c.html#ab7410d2afb30346832254a1d26d75b06", null ],
     [ "getFullStatus1", "i2c_a_m_i_s_8c.html#a734649ad7f7db20e7ba38bf0fb7c7e5f", null ],
     [ "getFullStatus2", "i2c_a_m_i_s_8c.html#a4563884d4288a5a03d5927affcd00705", null ],
     [ "getI2CAddress", "i2c_a_m_i_s_8c.html#a28c2a683a8e5bfd62cc13b1a6d493161", null ],

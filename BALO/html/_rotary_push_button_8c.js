@@ -11,10 +11,12 @@ var _rotary_push_button_8c =
     [ "setRotaryPosition", "_rotary_push_button_8c.html#aa3efce68ff77452bb7bdec0b0ef0db7c", null ],
     [ "initRotaryPushButtonDone", "_rotary_push_button_8c.html#a19b47d1621a4e1e079c389d88c9179fa", null ],
     [ "initRotaryPushButtonLEDDone", "_rotary_push_button_8c.html#a2e8cc8d351ad8f0b0729c15f4432fbe9", null ],
+    [ "LED", "_rotary_push_button_8c.html#a9f9fcc9860fb0f818befe3650f26af76", null ],
     [ "LEDbala", "_rotary_push_button_8c.html#a9222623564fba0f2e9fc01d1b92771ba", null ],
     [ "LEDpgb", "_rotary_push_button_8c.html#a0562d3d8794334f06870fc75ea1412c7", null ],
     [ "PuBio_bala", "_rotary_push_button_8c.html#adc65ecaa33b77fac7adc0b606045adff", null ],
     [ "PuBio_pgb", "_rotary_push_button_8c.html#a3f2370f926f4afa1c8c25f62840b3da1", null ],
     [ "pushButtonFlag", "_rotary_push_button_8c.html#a3807151c27347c227b96c794841ec8e5", null ],
+    [ "RoPuBu", "_rotary_push_button_8c.html#a7a1cf4b38eeb0897313cc6a492654d3c", null ],
     [ "rotoryPosition", "_rotary_push_button_8c.html#af2f3170e386b49aec6d9cc216710cc0a", null ]
 ];

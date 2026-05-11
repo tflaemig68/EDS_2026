@@ -1,5 +1,18 @@
 var searchData=
 [
-  ['halfbat_0',['halfBat',['../adc_b_a_t_8h.html#a9a85a5e6c8862eb03938052b064e4ab5a5df0e2b1fd84a14334074e5d2d1f5e75',1,'adcBAT.h']]],
-  ['halfbatvolt_1',['halfBatVolt',['../adc_b_a_t_8h.html#a91d56e13cb594f8d1bf03b4dab790136',1,'adcBAT.h']]]
+  ['files_20doxygen_20commented_20in_20source_0',['Files Doxygen commented in source',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md25',1,'Files (Doxygen-commented in source)'],['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md32',1,'Files (Doxygen-commented in source)']]],
+  ['filter_20functions_1',['Regler [PID and Filter Functions]',['../md_docs_2regler.html',1,'']]],
+  ['filteraccdata_2',['filterAccData',['../i2c_m_p_u_8c.html#a726d03ee8047841bf6e4c98f3d9c1b4a',1,'i2cMPU.c']]],
+  ['final_5frange_3',['final_range',['../struct_sequence_step_enables.html#affdd6f052cb42a883763ae1f2989e2f5',1,'SequenceStepEnables']]],
+  ['final_5frange_5fmclks_4',['final_range_mclks',['../struct_sequence_step_timeouts.html#a358e3ea0b96b952a1591f02f625df064',1,'SequenceStepTimeouts']]],
+  ['final_5frange_5fus_5',['final_range_us',['../struct_sequence_step_timeouts.html#a5472828e69ab41ce884f1892ff3772ff',1,'SequenceStepTimeouts']]],
+  ['final_5frange_5fvcsel_5fperiod_5fpclks_6',['final_range_vcsel_period_pclks',['../struct_sequence_step_timeouts.html#a645c37bd61c325eb8956cfcda8225a1b',1,'SequenceStepTimeouts']]],
+  ['font_7',['Font',['../_s_t7735_8c.html#a9470757e038d206fb456aa4ea3c730b0',1,'ST7735.c']]],
+  ['font_8',['font',['../struct__font.html#a3c4d10a869c73b09a5156eba6ce4ad34',1,'_font']]],
+  ['fscale_5f1000_9',['FSCALE_1000',['../i2c_m_p_u_8h.html#a6dc4f4e7aa93f45b030c7d985cd54d40afacbe033a53884a759c1407077f96f9c',1,'i2cMPU.h']]],
+  ['fscale_5f2000_10',['FSCALE_2000',['../i2c_m_p_u_8h.html#a6dc4f4e7aa93f45b030c7d985cd54d40ab6bed373ea82c8f58c491f61d79066ac',1,'i2cMPU.h']]],
+  ['fscale_5f250_11',['FSCALE_250',['../i2c_m_p_u_8h.html#a6dc4f4e7aa93f45b030c7d985cd54d40a6ccf991f8b5c242ae360ce3e6f5b5131',1,'i2cMPU.h']]],
+  ['fscale_5f500_12',['FSCALE_500',['../i2c_m_p_u_8h.html#a6dc4f4e7aa93f45b030c7d985cd54d40a010ca6aa60cfa62818a3cc9b1d89fe54',1,'i2cMPU.h']]],
+  ['functions_13',['Regler [PID and Filter Functions]',['../md_docs_2regler.html',1,'']]],
+  ['fusion_14',['TOF handling and velocity fusion',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md29',1,'']]]
 ];

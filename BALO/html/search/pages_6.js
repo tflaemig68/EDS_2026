@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['gruppe_3a_20dreh_20druck_20taster_0',['Abgabe Project ARM-Controller Gruppe: Dreh-Druck-Taster',['../md_docs_2_rotary__push__button.html',1,'']]]
+  ['eigenleistung_0',['Eigenleistung',['../md_docs_2_rotary__push__button.html#autotoc_md10',1,'']]],
+  ['examples_1',['Examples',['../md_docs_2regler.html#autotoc_md3',1,'Examples'],['../md_docs_2stepper.html#autotoc_md14',1,'Examples']]]
 ];

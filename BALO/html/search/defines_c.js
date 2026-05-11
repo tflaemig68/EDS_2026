@@ -38,5 +38,9 @@ var searchData=
   ['st7735_5fswreset_35',['ST7735_SWRESET',['../_s_t7735_8h.html#a2816f2fce9a937ced8567b2c2797767b',1,'ST7735.h']]],
   ['st7735_5ftftheight_36',['ST7735_TFTHEIGHT',['../_s_t7735_8h.html#ae39c2160287830a930ae303f4d9eb102',1,'ST7735.h']]],
   ['st7735_5ftftwidth_37',['ST7735_TFTWIDTH',['../_s_t7735_8h.html#a17fb18a972efbcba457b22ac53ab39bf',1,'ST7735.h']]],
-  ['st7735_5fvmctr1_38',['ST7735_VMCTR1',['../_s_t7735_8h.html#aa4d4dfc0e9e5b75add3eb42fd7987c29',1,'ST7735.h']]]
+  ['st7735_5fvmctr1_38',['ST7735_VMCTR1',['../_s_t7735_8h.html#aa4d4dfc0e9e5b75add3eb42fd7987c29',1,'ST7735.h']]],
+  ['step_5fto_5fmm_5fs_39',['STEP_TO_MM_S',['../balancer__t_8c.html#a06feb108233d56fed55c5bc9ff5ba741',1,'balancer_t.c']]],
+  ['steppacount_40',['StepPaCount',['../main_8c.html#acc426d0658b327281b5e6a9b9e37d227',1,'main.c']]],
+  ['steps_5fper_5frev_41',['STEPS_PER_REV',['../balancer__t_8c.html#a2d05bcc021d66ae0458c269139222edc',1,'balancer_t.c']]],
+  ['steptasktimeset_42',['StepTaskTimeSet',['../balancer__t_8c.html#a450d1fe850b6576b29e1f6fca4dacb39',1,'balancer_t.c']]]
 ];

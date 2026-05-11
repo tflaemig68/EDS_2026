@@ -1,6 +1,7 @@
 var files_dup =
 [
-    [ "docs", "dir_49e56c817e5e54854c35e136979f97ca.html", null ],
-    [ "Inc", "dir_f93dfce691d792349f1c14ede440e2e6.html", "dir_f93dfce691d792349f1c14ede440e2e6" ],
-    [ "Src", "dir_413f4e031a85da0d68269c6fd2f76e1c.html", "dir_413f4e031a85da0d68269c6fd2f76e1c" ]
+    [ "BALi", "dir_715df24346f66be57515a5df874d3d06.html", "dir_715df24346f66be57515a5df874d3d06" ],
+    [ "docs", "dir_9982c9e643dd9224a2ae44a04dd04017.html", null ],
+    [ "Inc", "dir_3a04bcd3172d45781c816736c0964182.html", "dir_3a04bcd3172d45781c816736c0964182" ],
+    [ "Src", "dir_99b9a1cac3a5277027e6e0fec164bf3d.html", "dir_99b9a1cac3a5277027e6e0fec164bf3d" ]
 ];

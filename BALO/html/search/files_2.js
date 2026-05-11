@@ -1,9 +1,13 @@
 var searchData=
 [
-  ['regler_2ec_0',['regler.c',['../regler_8c.html',1,'']]],
-  ['regler_2eh_1',['regler.h',['../regler_8h.html',1,'']]],
-  ['regler_2emd_2',['regler.md',['../regler_8md.html',1,'']]],
-  ['rotary_5fpush_5fbutton_2emd_3',['Rotary_push_button.md',['../_rotary__push__button_8md.html',1,'']]],
-  ['rotarypushbutton_2ec_4',['RotaryPushButton.c',['../_rotary_push_button_8c.html',1,'']]],
-  ['rotarypushbutton_2eh_5',['RotaryPushButton.h',['../_rotary_push_button_8h.html',1,'']]]
+  ['i2camis_2ec_0',['i2cAMIS.c',['../i2c_a_m_i_s_8c.html',1,'']]],
+  ['i2camis_2eh_1',['i2cAMIS.h',['../i2c_a_m_i_s_8h.html',1,'']]],
+  ['i2cdeivces_2ec_2',['i2cDeivces.c',['../i2c_deivces_8c.html',1,'']]],
+  ['i2cdevices_2eh_3',['i2cDevices.h',['../i2c_devices_8h.html',1,'']]],
+  ['i2cmpu_2ec_4',['i2cMPU.c',['../i2c_m_p_u_8c.html',1,'']]],
+  ['i2cmpu_2eh_5',['i2cMPU.h',['../i2c_m_p_u_8h.html',1,'']]],
+  ['i2crfid_2ec_6',['i2cRFID.c',['../i2c_r_f_i_d_8c.html',1,'']]],
+  ['i2crfid_2eh_7',['i2cRFID.h',['../i2c_r_f_i_d_8h.html',1,'']]],
+  ['i2ctof_2ec_8',['i2cTOF.c',['../i2c_t_o_f_8c.html',1,'']]],
+  ['i2ctof_2eh_9',['i2cTOF.h',['../i2c_t_o_f_8h.html',1,'']]]
 ];

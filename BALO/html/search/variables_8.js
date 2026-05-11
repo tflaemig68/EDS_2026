@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['kd_0',['KD',['../struct_p_i_d_contr.html#af2201630f9adb96e85f98924b7536a88',1,'PIDContr']]],
-  ['ki_1',['KI',['../struct_p_i_d_contr.html#aadae315766d01d4c570efc8f0059fb2d',1,'PIDContr']]],
-  ['kp_2',['KP',['../struct_p_i_d_contr.html#a64dec542c6c0961eceb484471397cece',1,'PIDContr']]]
+  ['height_0',['height',['../_s_t7735_8c.html#a81c9f8d0b8c3b49d770be14dbe9f0d37',1,'ST7735.c']]]
 ];

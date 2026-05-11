@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['regler_20pid_20and_20filter_20functions_0',['Regler [PID and Filter Functions]',['../md_docs_2regler.html',1,'']]]
+  ['lifecycle_0',['Constructor and lifecycle',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md23',1,'']]]
 ];
