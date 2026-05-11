@@ -1,18 +1,34 @@
 /**
  ******************************************************************************
- * @file           : main.c
- * @author         : Luis Brunn / based on reference main by Prof Flaemig
- * @brief          : Main for new balancer_t OOP architecture
+ * @file        main.c
+ * @author      Luis Brunn <https://github.com/LuBru70>
+ * @author 		based on reference main from Prof. Flämig
+ * @brief       Top-level application of the balancer firmware.
+ * 				Entry point and cooperative scheduler for the balancer_t OOP
+ * 				architecture.
+ *              Owns the hardware object instances, performs peripheral init,
+ *              runs the I2C slave detection, and drives the mode scheduled
+ *              StepTask and the periodic DispTask on their respective SysTick
+ *              ticks.
+ * @date        May 2026
+ ******************************************************************************
+
+ ******************************************************************************
+ * @attention This software is licensed based on CC BY-NC-SA 4.0
  ******************************************************************************
  */
 
+
+/* ----------- Standard library includes ----------- */
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
 
+/* ----------- Project module: central Balancer aggregate ----------- */
 #include "balancer_t.h"
 
+/* ----------- MCAL / drivers ----------- */
 #include <mcalSysTick.h>
 #include <mcalGPIO.h>
 #include <mcalI2C.h>
@@ -26,46 +42,84 @@
 #include "i2cDevices.h"
 
 /* ----------- Debug toggle: 1 = TFT debug prints, 0 = production ----------- */
-#define BALA_DEBUG  0
+#define BALA_DEBUG  0		// Switch for frequent TFT prints
 
 
 bool timerTrigger = false;
 uint32_t ST7735_Timer = 0UL;
 
-/* ----------- Hardware object instances ----------- */
-static MPU6050_t   MPU1;
-static TOFSensor_t TOF1;
-static Stepper_t   StepL;
-static Stepper_t   StepR;
-static analogCh_t  adChn;
-static Balancer_t  bala;
+/* ============================================================================
+ *  Static HW object instances (owned by main.c)
+ *  pass their addresses to BalancerCreate().
+ * ==========================================================================*/
+static MPU6050_t   MPU1;    //!< IMU instance (MPU6050)
+static TOFSensor_t TOF1;    //!< TOF instance (VL53L0X)
+static Stepper_t   StepL;   //!< Left  stepper (AMIS-30543)
+static Stepper_t   StepR;   //!< Right stepper (AMIS-30543)
+static analogCh_t  adChn;   //!< Battery-voltage ADC channel
+static Balancer_t  bala;    //!< Central Balancer aggregate
 
-/* ----------- Constants for CheckAndInitI2cSlaves ----------- */
-#define i2cAddr_motL  0x61
-#define i2cAddr_motR  0x60
-#define i2cAddr_TOF1  0x29
+/* ============================================================================
+ *  Constants for CheckAndInitI2cSlaves()
+ * ==========================================================================*/
+
+/**
+ * @name    Expected I2C slave addresses
+ * @{
+ */
+#define i2cAddr_motL  0x61	//!< Left  AMIS stepper I2C address
+#define i2cAddr_motR  0x60	//!< Right AMIS stepper I2C address
+#define i2cAddr_TOF1  0x29	//!< VL53L0X default I2C address
+/** @} */
 
 #define StepPaCount   5
 static const uint8_t StepPaValue[StepPaCount] = {15, 7, 2, 5, 4};
-static const uint8_t stepMode   = 3;
-static const bool    stepRotDir = true;
-static uint16_t TOF_DISTANCE_1  = 10;
+static const uint8_t stepMode   = 3;	//!< 1/16 microstepping
+static const bool    stepRotDir = true;	//!< right motor: forward (left motor uses !stepRotDir)
+static uint16_t TOF_DISTANCE_1  = 10;	//!< initial measuredRange [mm]
 
-/* ----------- Private prototype ----------- */
+/* ============================================================================
+ *  Initialisation of I2C devices
+ * ==========================================================================*/
 static int  CheckAndInitI2cSlaves(uint8_t *DevMask,
                                   Stepper_t *pStepL, Stepper_t *pStepR,
                                   MPU6050_t *pMPU1, TOFSensor_t *pTOF1);
 
-/* ----------- CheckAndInitI2cSlaves ----------- */
-/*                                                                        */
-/* Exact replica of reference_old_main.c lines 284–414.                   */
-/* Call sequence (one call per 50ms StepTask tick in M_CheckI2cSlaves):   */
-/*   Call 1  CycleRun==-4 : StepL find+init, CycleRun++ -3, return        */
-/*   Call 2  CycleRun==-3 : StepR init (falls thru) + TOF detect          */
-/*                          + MPU detect + mpuInit#1 CycleRun=-2          */
-/*   Call 3  CycleRun==-2 : TOF_init_device + mpuInit#2 CycleRun=-1       */
-/*   Call 4  CycleRun==-1 : TOF config+start + mpuInit#3 CycleRun=0       */
-/*   Main loop sees return==0, all devMask bits set enters M_Bala         */
+/**
+ * @fn		    CheckAndInitI2cSlaves
+ *
+ * @brief       Staged I2C bus discovery + slave initialisation.
+ *
+ * @details     Replica of the old main.c init sequence
+ *              (lines 284..414). Called once per StepTask tick (50 ms)
+ *              while bala.TaskMode == M_CheckI2cSlaves. Drives an internal
+ *              static state variable "CycleRun" that walks through the
+ *              following stages — see also the call sequence below:
+ *
+ *				Call 1  CycleRun==-4 : StepL find+init, CycleRun++ -3, return
+ *				Call 2  CycleRun==-3 : StepR init (falls thru) + TOF detect
+ *										+ MPU detect + mpuInit#1 CycleRun=-2
+ *				Call 3  CycleRun==-2 : TOF_init_device + mpuInit#2 CycleRun=-1
+ *				Call 4  CycleRun==-1 : TOF config+start + mpuInit#3 CycleRun=0
+ *
+ * @note		this routine intentionally remains in main.c because it reproduces
+ *    	  	  	the staged hardware discovery sequence of the reference
+ *    	  	  	implementation. A future refactoring could move device-specific
+ *    	  	  	discovery steps into the corresponding hardware abstraction modules.
+ *
+ *
+ * @param[in,out] DevMask  Pointer to the Balancer's devMask byte; bits are
+ *                         set as devices are discovered.
+ * @param[in,out] pStepL   Pointer to LEFT stepper object.
+ * @param[in,out] pStepR   Pointer to RIGHT stepper object.
+ * @param[in,out] pMPU1    Pointer to MPU6050 object.
+ * @param[in,out] pTOF1    Pointer to TOF sensor object.
+ *
+ * @returns     int — current value of the internal CycleRun counter.
+ *              The main loop watches for "0", which means "all required
+ *              init steps complete". The DevMask tells the main loop
+ *              which devices were actually found.
+ */
 static int CheckAndInitI2cSlaves(uint8_t *DevMask,
                                  Stepper_t *pStepL, Stepper_t *pStepR,
                                  MPU6050_t *pMPU1, TOFSensor_t *pTOF1)
@@ -76,14 +130,14 @@ static int CheckAndInitI2cSlaves(uint8_t *DevMask,
     static I2C_TypeDef *i2cTOF  = I2C1;
     uint8_t foundAddr;
     static uint8_t i2c_Addr = 1;
-    static int CycleRun = -4;
+    static int CycleRun = -4;		// stage counter (preserved across calls)
     int MPU6050ret;
 
 #if BALA_DEBUG
     static int mpuInitCallCount = 0;
 #endif
 
-    /* CycleRun == -5: dummy bus warm-up */
+    /* CycleRun == -5: dummy bus warm-up - RESERVED, not entered with current static init = -4 */
     if (CycleRun == -5)
     {
         foundAddr = i2cFindSlaveAddr(i2c, i2c_Addr);
@@ -121,7 +175,7 @@ static int CheckAndInitI2cSlaves(uint8_t *DevMask,
         return (CycleRun);
     }
 
-    /* CycleRun == -3: RIGHT stepper — no guard, no return */
+    /* CycleRun == -3: RIGHT stepper */
     if ((*DevMask & DevStepR) == 0)
     {
         foundAddr = i2cFindSlaveAddr(i2cSTEP, i2cAddr_motR);
@@ -213,7 +267,7 @@ static int CheckAndInitI2cSlaves(uint8_t *DevMask,
         return (CycleRun);
     }
 
-    /* MPU: continue init (mpuInit steps -2→-1→0) */
+    /* MPU: continue init (mpuInit steps -2 -> -1 -> 0) */
     if (((*DevMask & DevMPU1) > 0) && (CycleRun < 0))
     {
         MPU6050ret = mpuInit(pMPU1, i2cMPU, i2cAddr_MPU6050,
@@ -230,9 +284,48 @@ static int CheckAndInitI2cSlaves(uint8_t *DevMask,
     return (CycleRun);
 }
 
-/* -------------------------------------- */
-/* main                                   */
-/* -------------------------------------- */
+
+/* ============================================================================
+ *  Begin of the main routine
+ * ==========================================================================*/
+
+/**
+ * @fn		    main
+ *
+ * @brief       Balancer firmware entry point.
+ *
+ * @details     Performs peripheral initialisation in the same order as
+ *              the reference (LED, both I2C buses, ADC, SysTick,
+ *              SPI to TFT, TFT init+rotation+font, rotary encoder),
+ *              constructs the central Balancer aggregate object, sets
+ *              up the SysTick countdown timers and enters the
+ *              loop.
+ *
+ *              Loop:
+ *              - Every 1 ms: timerTrigger -> update countdown timers.
+ *              - Every iteration:  bala.paramEdit (rotary encoder).
+ *              - StepTaskTimer expired: switch on bala.TaskMode and
+ *                run the corresponding state.
+ *              - DispTaskTimer expired (700 ms): refresh the TFT
+ *                diagnostic area (see the @ref DispTask documentation on when and why
+ *                this should be limited when active distance control).
+ *
+ *              The state machine inside the StepTask switch:
+ *                M_InitBat        -> read battery
+ *                M_CheckI2cSlaves -> drive CheckAndInitI2cSlaves;
+ *                                   when ready, pick the best mode:
+ *                                     - all of MPU+StepL+StepR -> M_DistCtrl,
+ *                                     - else only TOF          -> M_DispTofData,
+ *                                     - else only MPU          -> M_DispMpuData.
+ *                M_DispMpuData    -> show numeric IMU data.
+ *                M_DispTofData    -> show distance.
+ *                M_Bala           -> inner balance loop control.
+ *                M_DistCtrl       -> inner balance + outer distance control.
+ *                default          -> reset to M_InitBat.
+ *
+ * @return      int Program return value. This function normally never
+ *              returns because the firmware runs inside an infinite loop.
+ */
 int main(void)
 {
     int  I2cCheckResult = -1;
@@ -276,7 +369,7 @@ int main(void)
     setLED(RED_off);
     tftPrintColor((char *)"I2C Scanner running", 0, 0, tft_MAGENTA);
 
-    /* ---------------------- MAIN LOOP ---------------------- */
+    /* ============================== MAIN LOOP ============================== */
     while (1)
     {
         if (timerTrigger)
@@ -320,11 +413,11 @@ int main(void)
                     {
                         bala.stepLenable = true;
                         bala.stepRenable = true;
-                        bala.TaskMode    = M_Bala;
+                        bala.TaskMode    = M_DistCtrl;			// Change default task mode here
                         bala.RunInit     = true;
                         setLED(GREEN);
 #if BALA_DEBUG
-                        tftPrintColor((char *)"-> M_Bala     ", 0, 0, tft_GREEN);
+                        tftPrintColor((char *)"-> M_DistCtrl     ", 0, 0, tft_GREEN);
 #endif
                         break;
                     }
@@ -367,7 +460,7 @@ int main(void)
 
 #if BALA_DEBUG
                     /* Show MPU config + live pitch every ~700ms */
-                    /* ATTENTION: makes balancing slightly unstable (long write times): Falls possible */
+                    /* ATTENTION: makes balancing slightly unstable (long write times): Fall possible */
                     {
                         static int dbgCnt = 0;
                         if (++dbgCnt >= 100)
@@ -402,6 +495,9 @@ int main(void)
 
                 case M_DistCtrl:
                 {
+                	/* Inner loop runs at every StepTask tick; outer loop
+                	 * runs only when its own timer expires. This is the
+                	 * cascade implementation for distance control. */
                     bala.updatePitch(&bala);
 
                     if (isSystickExpired(bala.DistCtrlTaskTimer))
@@ -427,7 +523,17 @@ int main(void)
         if (isSystickExpired(bala.DispTaskTimer))
         {
             systickSetTicktime(&bala.DispTaskTimer, 700UL);
-            bala.updateDisplay(&bala);
+            /* In M_DistCtrl, only update the display when balancer robot is nearly upright.
+             * When updating the display during active tilting (to generate translation acceleration/velocity),
+             * the SPI write delays the pitch control and therefore lead to instability/falling.
+             */
+            if (bala.TaskMode == M_DistCtrl) {
+            	if (fabs(bala.pIMU->pitch) < 0.0175f) { 	// abs(pitch) < 1°: safe to write display
+            		bala.updateDisplay(&bala);
+            	}
+            } else {
+            	bala.updateDisplay(&bala);
+            }
         }
 
     }

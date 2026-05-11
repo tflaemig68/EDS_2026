@@ -1,11 +1,72 @@
 /**
- *      balancer_t.c
+ ******************************************************************************
+ * @file         balancer_t.c
+ * @author       Luis Brunn <https://github.com/LuBru70>
+ * @brief        Implementation of the Balancer_t aggregate object.
+ * @date         March 2026
+ ******************************************************************************
  *
- *      @file balancer_t.c provides architecture of the balancer superclass
- *      @author: Luis Brunn
- *      Created on: Mar. 18, 2026
+ * @details
+ * This file implements the OOP-in-C style Balancer_t module. It contains the
+ * default parameter tables, the module-level timing constants, the method
+ * implementations assigned to the Balancer_t function pointers, private helper
+ * functions, the const Balancer prototype instance, and the BalancerCreate()
+ * constructor.
+ *
+ * @par Module responsibilities
+ * - Defines the default values for the 25 tunable parameters:
+ *   defaultParam[], ParamTitle[] and ParamScale[].
+ *   The element order must stay synchronized with the ParamIdx enum declared
+ *   in balancer_t.h.
+ * - Implements the Balancer_t methods:
+ *   BalancerInit(), BalancerUpdatePitch(), BalancerUpdateDist(),
+ *   BalancerUpdateDisplay(), BalancerParamEdit() and
+ *   BalancerDispAlphaNumMPU().
+ * - Provides private static helper functions:
+ *   StepperIHold(), dispMPUBat(), visualisationTOF() and applyParams().
+ * - Defines the const Balancer_t prototype instance. This prototype carries
+ *   the method-pointer table and is copied into every user-supplied Balancer_t
+ *   instance inside BalancerCreate().
+ * - Provides BalancerCreate(), which connects the externally owned hardware
+ *   objects from main.c to the Balancer_t aggregate and initializes the object.
+ *
+ * @par Timing constants
+ * The cycle times are defined by preprocessor macros at the top of this file:
+ * - StepTaskTimeSet: 7 ms inner pitch-control period.
+ * - DistCtrlTaskTimeSet: 49 ms outer/middle distance-control period.
+ * - DispTaskTimeSet: 700 ms display refresh period.
+ *
+ * The corresponding sample times in seconds are provided by TA_INNER and
+ * TA_OUTER and are used when initializing the PIDContr_t objects.
+ *
+ * @par Cascade integration
+ * The distance-control extension is coupled into the original pitch-control
+ * loop through b->pitchOffset. BalancerUpdateDist() computes this value from
+ * the outer distance loop and the middle velocity loop. BalancerUpdatePitch()
+ * then subtracts the clamped pitch offset from the measured pitch before the
+ * inner PID_phi controller is evaluated.
+ *
+ * In M_Bala, BalancerUpdateDist() is not executed, so the pitch controller
+ * behaves as the original balancing loop. When the selected mode is not
+ * M_DistCtrl, BalancerUpdateDisplay() resets the distance-control state,
+ * including pitchOffset and tarVelo, to avoid reusing stale outer-loop values.
+ *
+ * If a fall is detected in BalancerUpdatePitch(), the distance and velocity
+ * controller states are additionally reset so that accumulated outer-loop
+ * integrator values do not remain active after recovery.
+ *
+ * @par Visibility
+ * Functions that are only used inside this translation unit are declared
+ * static. The public Balancer_t interface is provided through balancer_t.h.
+ * The main public construction entry point is BalancerCreate(); the method
+ * pointers themselves are initialized from the const Balancer prototype.
+ *
+ ******************************************************************************
+ * @attention This software is licensed based on CC BY-NC-SA 4.0
+ ******************************************************************************
  */
 
+/* ----------- Includes ----------- */
 #include <stdio.h>
 #include "balancer_t.h"
 #include <math.h>
@@ -14,15 +75,28 @@
 #include <ST7735.h>
 #include <RotaryPushButton.h>
 #include <adcBAT.h>
-#include "i2cDevices.h"   /* CheckAndInitI2cSlaves */
+#include "i2cDevices.h"
 
-// *Timing
-#define StepTaskTimeSet 7UL			// the communication to stepper takes <1ms therefore total StepTaskTime = 7ms
-#define DistCtrlTaskTimeSet 49UL	// TODO: Adjust time for outer control loop (now 7x StepTaskTimeSet)
-#define DispTaskTimeSet 700UL		// Task for Position control and Display Status
+/* ============================================================================
+ *  Timing configuration
+ * ==========================================================================*/
 
-#define TA_INNER ((float)StepTaskTimeSet    * 1e-3f)   // 0.007 s
-#define TA_OUTER ((float)DistCtrlTaskTimeSet * 1e-3f)  // 0.049 s
+/**
+ * @name    Task-cycle times (compile-time constants, file-private)
+ * @{
+ */
+#define StepTaskTimeSet 7UL			//!< Inner state machine [ms] (communication to stepper takes <1ms therefore total StepTaskTime = 7ms)
+#define DistCtrlTaskTimeSet 49UL	//!< Outer (distance) loop [ms] (currently 7x inner StepTaskTime)
+#define DispTaskTimeSet 700UL		//!< Display refresh [ms]
+/** @} */
+
+/**
+ * @name    Sample-time constants in seconds (used by PID.init)
+ * @{
+ */
+#define TA_INNER ((float)StepTaskTimeSet    * 1e-3f)   //!< 0.007 s
+#define TA_OUTER ((float)DistCtrlTaskTimeSet * 1e-3f)  //!< 0.049 s
+/** @} */
 
 uint32_t DistCtrlTaskTimeMs = DistCtrlTaskTimeSet;
 
@@ -32,19 +106,44 @@ uint32_t StepTaskTime[] = {
   StepTaskTimeSet,
   StepTaskTimeSet,
   StepTaskTimeSet
-};
+};									//!< StepTask cycle-time table (same order as TaskModus).
 
-//* Stepper motors position conversion
-const int16_t rad2step = 520;		// Ratio step-counts (200 Full-Steps div 1/16 Steps) per rotation at rad:  509.4 =  200* 16 / (2 PI) or 1600/PI
+/* ----------- Stepper motors position conversion ----------- */
+/**
+ * @brief   Conversion gain to translate pitch value to stepper step counts
+ * @details rad2step converts the balancing controller’s pitch correction into stepper microsteps,
+ * 			so the motors can execute the correction.
+ * 			This increment is added to the current left/right motor target position
+ *          before calling StepperSetPos().
+ *          Approximate theoretical value for 200 steps/rev and 1/16 microstepping:
+ *          200 * 16 / (2*pi) = 509,3.
+ *          The implementation uses 520.
+ */
+static const int16_t rad2step = 520;
 
-//* Fall detection
-#define PITCH_FALL_RAD 0.35f  		// |pitch| > this → robot fallen
-#define PITCH_ACTIVE 0.05f  		// |pitch| < this → balanced
+/**
+ * @name Wheel-velocity scaling constants
+ * @{
+ */
+#define WHEEL_CIRC_MM   375.0f                                  //!< wheel circumference [mm]
+#define STEPS_PER_REV   3200.0f                                 //!< 200 full steps x 16 microsteps
+#define STEP_TO_MM_S    (WHEEL_CIRC_MM / STEPS_PER_REV / TA_OUTER)
+/** @} */
+
+/* ----------- Fall detection ----------- */
+#define PITCH_FALL_RAD 0.35f  		//!< |pitch| > this: robot fallen
+#define PITCH_ACTIVE 0.05f  		//!< |pitch| < this: balanced
 
 
-// ******************** Set default params ********************
+/* ============================================================================
+ *  Default parameters
+ * ==========================================================================*/
+
+/**
+ * @brief   Default parameter values, copied into ParamValue[] at init().
+ * @details Order MUST match the ParamIdx enum in balancer_t.h.
+ */
 static const float defaultParam[PARAM_COUNT] = {
-		/* Same order as ParamIdx enum n balancer_t.h */
 		0,        	// a_MODE task mode selector
 		0,        	// a_Cour route number
 		0.0f,     	// a_posTol position tolerance [steps]
@@ -65,13 +164,13 @@ static const float defaultParam[PARAM_COUNT] = {
 		0.00f,   	// a_dKD PID_dist derivative gain
 		280.0f,  	// a_dSP distance setpoint [mm]
 		0.2f,      	// a_dLPF MeanVal weight for TOF low-pass
-		100.0f,		// dist_blind [mm] -> dist used when TOF out of range
-		0.00f,     // a_vKP
-		0.00f,    // a_vKI
-		0.00f,     // a_vKD
-		2000.0f,      // a_vMax [mm/s]
-		0.000102f,       // a_a2p accel2pitch gain
-		0.05f,      // a_pClamp variable pitch clamp [rad], replaces fixed PITCH_CLAMP
+		100.0f,		// a_distBlind: fallback distance [mm] used when TOF is invalid
+		0.00f,      // a_vKP
+		0.00f,      // a_vKI
+		0.00f,      // a_vKD
+		2000.0f,    // a_vMax [mm/s]
+		1.0f,       // a_a2p accel2pitch gain
+		0.05f,      // a_pClamp variable pitch clamp [rad]
 };
 
 static const char ParamTitle[PARAM_COUNT][5] = {
@@ -79,45 +178,57 @@ static const char ParamTitle[PARAM_COUNT][5] = {
 	"piKP", "piKI", "piKD", "raRo", "maRo", "raTr",
 	"dKP ", "dKI ", "dKD ", "dSP ", "dLPF", "dBli",
 	"vKP ", "vKI ", "vKD ", "vMax", "a2p ", "pClp"
-};
+};					//!< labels for parameter names on the TFT.
 
+/**
+ * @brief   Parameter scale factor for rotary encoder editing.
+ * @details ParamValue[i] = (float)encoderTicks / ParamScale[i].
+ *          Larger scale -> finer increment per click. The values are
+ *          adjusted to give a sensible "step" per encoder click for the
+ *          expected operating range of each parameter.
+ */
 static const float ParamScale[PARAM_COUNT] = {
     1,   1,   0.2,  500,  100,  1,    500,
     100, 500,  100,  500,  1,    500,
-    /* Distance loop with new units */
-    20,    // a_dKP    inc 0.05    range 0.1–3.0
-    1000,  // a_dKI    inc 0.001   range 0–0.05
-    100,   // a_dKD    inc 0.01    range 0–0.5
-    0.1,   // a_dSP    inc 10mm    range 100–800
-    100,   // a_dLPF   inc 0.01    range 0.05–0.5
-    0.1,   // a_distBlind inc 10mm range 50–200
-    /* Velocity loop (still unused in 2-loop test) */
+    /* Distance loop */
+    20,    // a_dKP    		inc 0.05
+    1000,  // a_dKI    		inc 0.001
+    100,   // a_dKD    		inc 0.01
+    0.1,   // a_dSP    		inc 10mm
+    100,   // a_dLPF   		inc 0.01
+    0.1,   // a_distBlind 	inc 10mm
+    /* Velocity loop */
     10000, 100000, 10000, 0.5,
     100000, 1000
 };
 
-// ******************** Method implementations ********************
-/**
- * All methods static -> invisible outside of this .c file
- * Vtable is public interface
- */
+/* ============================================================================
+ *  PRIVATE Function IMPLEMENTATIONS
+ *  ---------------------------------------------------------------------------
+ *  All functions below are file-private because they are declared static.
+ *  Some of them are used as Balancer_t methods by storing their addresses in
+ *  the const Balancer prototype instance at the bottom of this file.
+ *  Others are internal helper functions used only by those methods.
+ * ==========================================================================*/
 
 /**
  * void StepperIHold(Balancer_t *b, bool OnSwitch)
- * @param  OnSwitch == true;  IHold active;
- *					== false; IHold reduced to minimum
+ * @param[in]	b			Balancer instance whose left and right steppers are updated
+ *
+ * @param[in]  	OnSwitch == true;  IHold active;
+ *						 == false; IHold reduced to minimum
  * @returns ---
  * function that toggles the stepper holding current
- * file private (static) and takes Balancer_t* so accessing b->pStepL and R is possible
+ * Takes Balancer_t* so accessing b->pStepL and R is possible
  */
 static void StepperIHold(Balancer_t *b, bool OnSwitch)
 {
 	static bool OldStatus = false;
-	const uint8_t iOff = 0x0;  	//switch off the PWM Regulator Value 0xFF only for AMIS
+	const uint8_t iOff = 0x0;  	// switch off the PWM Regulator Value 0xFF only for AMIS
 								// 0xFF only for AMIS IC
 								// 0x0 reduced current to 59mA
 
-	if (OnSwitch == OldStatus) return;   	// commands only active of OnSwitch Status changed
+	if (OnSwitch == OldStatus) return;   	// commands only active if OnSwitch Status changed
 
 	if (OnSwitch) {
 		stepper.iHold.set(b->pStepL, 2);   	// vMin = 2 (from StepPaValue[2])
@@ -131,6 +242,27 @@ static void StepperIHold(Balancer_t *b, bool OnSwitch)
 	OldStatus = OnSwitch;
 }
 
+/**
+ * @fn    BalancerInit
+ *
+ * @brief       Initialise the software state of a Balancer_t instance.
+ *
+ * @details     Called once by BalancerCreate() and again whenever a
+ *              full re-init is required. Performs:
+ *              1. Copy defaultParam[] into ParamValue[].
+ *              2. Initialise PID_phi, PID_dist, PID_velo.
+ *              3. Clear the TOF distance low-pass filter.
+ *              4. Reset every operating-state field (mode, flags,
+ *                 timers, motor positions, route counters).
+ *
+ *              After return the Balancer is in M_InitBat, with RunInit
+ *              set so the first M_Bala / M_DistCtrl entry will perform
+ *              its initialisation.
+ *
+ * @param[in]   b   Pointer to the Balancer_t to initialise.
+ *
+ * @returns     ---
+ */
 static void BalancerInit(Balancer_t *b) {
 	/* Copy default params */
 	for (int i = 0; i < PARAM_COUNT; i++) {
@@ -160,8 +292,6 @@ static void BalancerInit(Balancer_t *b) {
 	b->resetStepR        = true;
 	b->stepLenable       = false;
 	b->stepRenable       = false;
-	// Routine für init balancer stepper (WHILE) ab Z.283 checkandinit()
-	// oder als methoden der stepper (generell HW obj) implementieren
 	b->incRot            = 0.0f;
 	b->rampRot           = 0.0f;
 	b->pitchOffset       = 0.0f;
@@ -192,6 +322,21 @@ static void BalancerInit(Balancer_t *b) {
 
 /* ---------- Display helpers (moved from main.c into balancer_t) ---------- */
 
+/**
+ * @fn		    dispMPUBat
+ *
+ * @brief       Display IMU temperature and battery voltage on one TFT line.
+ *
+ * @details     Reads the temperature from the mpuGetTemp and the
+ *              latest battery voltage from the ADC channel (getBatVoltage).
+ *              Set print color depending on the battery status
+ *              (green = ok, yellow = half, red = empty/undervolt/overvolt).
+ *
+ * @param[in]   pMPU1   Pointer to the MPU6050 object.
+ * @param[in]   pADChn  Pointer to the battery ADC channel object.
+ *
+ * @returns     --- (Written prints on the TFT display)
+ */
 static void dispMPUBat(MPU6050_t *pMPU1, analogCh_t *pADChn)
 {
     char strT[32];
@@ -206,6 +351,19 @@ static void dispMPUBat(MPU6050_t *pMPU1, analogCh_t *pADChn)
     tftPrint((char *)strT, 10, 110, 0);
 }
 
+/**
+ * @fn		    BalancerDispAlphaNumMPU
+ *
+ * @brief       Display MPU accel components (X/Y/Z) as numeric values.
+ *
+ * @details     Used by the M_DispMpuData diagnostic/debugging mode. Triggers a
+ *              fresh accel read on the IMU, then prints the three axes
+ *              one above the other at fixed TFT coordinates.
+ *
+ * @param[in]   b   Pointer to the Balancer_t.
+ *
+ * @returns     --- (Written prints on the TFT display)
+ */
 static void BalancerDispAlphaNumMPU(Balancer_t *b)
 {
     char str[16];
@@ -215,6 +373,15 @@ static void BalancerDispAlphaNumMPU(Balancer_t *b)
     sprintf(str, "%+6.3f", b->pIMU->accel[2]); tftPrint(str, 20, 70, 0);
 }
 
+/**
+ * @fn		    visualisationTOF
+ *
+ * @brief       Display the latest TOF distance value in centimetres.
+ *
+ * @param[in]   TOFSENS  Pointer to the TOFSensor_t
+ *
+ * @returns     --- (Written prints on the TFT display)
+ */
 static void visualisationTOF(TOFSensor_t *TOFSENS)
 {
     char buffer[8];
@@ -237,12 +404,51 @@ static void visualisationTOF(TOFSensor_t *TOFSENS)
     oldDistance = TOFSENS->distanceFromTOF;
 }
 
-/* ----- core inner balance loop -----
- * translation of case M_Bala from reference
- * RunInit, IMU read + fall detection, check if balance action needed, active PID balancing with stepper commands
+/**
+ * @fn		    BalancerUpdatePitch
+ *
+ * @brief       Inner balance loop.
+ *
+ * @details     Translation of "case M_Bala" from the reference
+ *              into a method of the Balancer_t object. Sequence:
+ *
+ *                1. RunInit branch (on entering M_Bala/M_DistCtrl):
+ *                   - Switch TFT to landscape-flip and paint header.
+ *                   - Activate stepper hold current and zero positions.
+ *                   - Push parameter values into the IMU
+ *                     (pitchZero, swLowPassFilt, pitchFilt, HW DLPF).
+ *                   - (Re-)initialise PID_phi.
+ *                   - Set the IMU axis remap (RPY[2,3,-1]) which matches
+ *                     the way the MPU is mounted on this robot.
+ *                   - Set IMU integration time-base.
+ *
+ *                2. Read pitch from the IMU and run fall detection
+ *                   (|pitch| > PITCH_FALL_RAD -> robot fallen):
+ *                   - Re-init PID_phi and clear PID_dist/PID_velo to
+ *                     drop integrator wind-up accumulated during the fall.
+ *                   - Reduce stepper current (relax the motors).
+ *                   - return.
+ *
+ *                3. Determine "actively balancing" state:
+ *                   - |pitch| < PITCH_ACTIVE -> activeMove = true.
+ *                   - Otherwise hold current is kept on but no motor
+ *                     command is issued.
+ *
+ *                4. Active PID (pitch) step:
+ *                   - Clamp pitchOffset to +/- a_pClamp so the outer loop
+ *                     can never destabilise the inner loop.
+ *                   - error_phi = pitch - pitchOffset.
+ *                   - setPitch  = rad2step * PID_phi.run(error_phi).
+ *                   - Once activeMove is asserted, command ONE motor (left/right
+ *                     alternating via stepRenable toggle)- This keeps
+ *                     the per-call I2C load below the 7 ms timing.
+ *
+ * @param[in]   b   Pointer to the Balancer_t object.
+ *
+ * @returns     ---
  */
 static void BalancerUpdatePitch(Balancer_t *b) {
-	/* RunInit: when TaskMode M_Bala is entered */
+	/* RunInit: when TaskMode M_Bala or M_DistCtrl is entered */
 	if (b->RunInit) {
 		tftSetRotation(LANDSCAPE_FLIP);
 		tftFillScreen(tft_BLACK);
@@ -273,9 +479,9 @@ static void BalancerUpdatePitch(Balancer_t *b) {
 		mpuSetLpFilt(b->pIMU);
 
 		// set MPU assemble
-		b->pIMU->RPY[0] = 2;			// MPU y Axis goes to the front
-		b->pIMU->RPY[1] = 3;			// MPU z-Axis goes to the left side
-		b->pIMU->RPY[2] = -1;			// MPU x-Axis goes down
+        b->pIMU->RPY[0] = 2;            // MPU y-axis points forward
+        b->pIMU->RPY[1] = 3;            // MPU z-axis points to the left
+        b->pIMU->RPY[2] = -1;           // MPU x-axis points down
 		b->pIMU->timebase = (float) (StepTaskTimeSet+1) * 10e-4;  		// CycleTime for calc from Gyro to angle fitting
 		b->RunInit = false;
 	}
@@ -374,6 +580,35 @@ static void BalancerUpdatePitch(Balancer_t *b) {
 	setLED(RED_off);
 }
 
+/**
+ * @fn		    BalancerUpdateDist
+ *
+ * @brief       Outer (distance) + middle (velocity) loop procedure.
+ *
+ * @details     Runs at TA_OUTER (currently 49 ms). Sequence:
+ *
+ *              1. Sample TOF; skip if no new sample is ready.
+ *              2. Switch on TOF validity:
+ *                 - Valid: filter through MeanVal LPF, compute
+ *                   distance-derived velocity.
+ *                 - Invalid (out of range or below a_distBlind):
+ *                   freeze last filtered distance, zero the
+ *                   distance-derived velocity, clear PID_velo to
+ *                   prevent integrator wind-up while blind.
+ *              3. Outer loop:  error_dist = dist - distSetpoint,
+ *                              tarVelo  = clamp(PID_dist.run, +/- a_vMax).
+ *              4. Velocity measurement: combine wheel-encoder velocity
+ *                 (mean of veloL/veloR) with TOF-derived velocity by
+ *                 picking the larger magnitude.
+ *              5. Middle loop: error_velo = tarVelo - veloMeas,
+ *                              tarAccel = PID_velo.run.
+ *              6. pitchOffset = tarAccel * accel2pitchK
+ *                 (given to the inner loop next call to updatePitch).
+ *
+ * @param[in]   b   Pointer to the Balancer_t object.
+ *
+ * @returns     ---
+ */
 static void BalancerUpdateDist(Balancer_t *b)
 {
     /* ----- 1. TOF read ----- */
@@ -418,10 +653,9 @@ static void BalancerUpdateDist(Balancer_t *b)
     if (b->tarVelo < -vMax) b->tarVelo = -vMax;
 
 
+
+
     /* ----- 3. Velocity measurement ----- */
-    #define WHEEL_CIRC_MM   375.0f
-    #define STEPS_PER_REV   3200.0f
-    #define STEP_TO_MM_S    (WHEEL_CIRC_MM / STEPS_PER_REV / TA_OUTER)
 
     int16_t curPosL = (int16_t)StepperGetPos(b->pStepL);
     int16_t curPosR = (int16_t)StepperGetPos(b->pStepR);
@@ -446,6 +680,23 @@ static void BalancerUpdateDist(Balancer_t *b)
     b->pitchOffset = tarAccel * b->accel2pitchK;
 }
 
+/**
+ * @fn		    BalancerUpdateDisplay
+ *
+ * @brief       Refresh the data area of the TFT.
+ *
+ * @details     Two responsibilities:
+ *              1. If TOF was detected (devMask DevTOF1) and a fresh
+ *                 sample is ready, call @ref visualisationTOF().
+ *              2. In passive / diagnostic modes (and in M_Bala/M_DistCtrl when not
+ *                 actively moving) call @ref dispMPUBat(). Skipping it during active balancing
+ *                 prevents the SPI display refresh (and the embedded I2C
+ *                 mpuGetTemp call).
+ *
+ * @param[in]   b   Pointer to the Balancer_t object.
+ *
+ * @returns     ---
+ */
 static void BalancerUpdateDisplay(Balancer_t *b) {
 	/* TOF distance visualisation (reference lines 748–755) */
 	if ((b->devMask & DevTOF1) != 0) {
@@ -466,10 +717,30 @@ static void BalancerUpdateDisplay(Balancer_t *b) {
 	}
 }
 
-/* ---------- Param editing ---------- */
-// TODO: Re write after first balancing test with new OOP architecture
-/* Apply current ParamValue[] to IMU config and re-init PID_phi. */
+/* ----------------------------------------------------------------------------
+ *   Parameter editor
+ * --------------------------------------------------------------------------*/
 
+/**
+ * @fn		    applyParams
+ *
+ * @brief       Push the current ParamValue[] to the underlying HW objects.
+ *
+ * @details     Whenever the user edits a parameter via the rotary encoder
+ *              (in BalancerParamEdit) this helper:
+ *              - copies the IMU-related parameters into the MPU6050_t,
+ *              - re-inits PID_phi, PID_dist and PID_velo,
+ *              - updates the distance setpoint and clears the LPF,
+ *              - clamps the HW DLPF index to its valid range and pushes
+ *                it to the MPU,
+ *
+ *              Effect: parameter changes take effect on the next
+ *              control-loop tick, no full re-init required.
+ *
+ * @param[in]   b   Pointer to the Balancer_t object.
+ *
+ * @returns     ---
+ */
 static void applyParams(Balancer_t *b) {
 	MPUlpbw tableLPFValue[7] = {
 		LPBW_260, LPBW_184, LPBW_94, LPBW_44, LPBW_21, LPBW_10, LPBW_5
@@ -506,7 +777,27 @@ static void applyParams(Balancer_t *b) {
 	b->routeNum = (uint8_t)b->ParamValue[a_Cour];
 }
 
-/* Parameter editor — polls rotary encoder and push button. */
+/**
+ * @fn		    BalancerParamEdit
+ *
+ * @brief       Poll the rotary push button + encoder; edit ParamValue[].
+ *
+ * @details     Called from the main loop on every iteration. Behaviour:
+ *              - On push-button press: cycle "modif" (currently selected
+ *                parameter index) one step forward and wrap around.
+ *                If a_MODE was set to a non-zero value by an earlier
+ *                edit, apply it as the new TaskMode and reset the
+ *                outer/middle loops.
+ *                Display the new parameter name + current value.
+ *              - On encoder rotation: update ParamValue[modif] using the
+ *                per-parameter ParamScale, repaint the value in yellow,
+ *                and call applyParams() so the change takes effect on
+ *                the next control-loop tick.
+ *
+ * @param[in]   b   Pointer to the Balancer_t object.
+ *
+ * @returns     ---
+ */
 static void BalancerParamEdit(Balancer_t *b) {
 	int ButtPos;
 	static int oldButtPos = 0;
@@ -521,8 +812,7 @@ static void BalancerParamEdit(Balancer_t *b) {
 			modif = 0;
 		}
 
-		// Mode switch: if a_MODE was set to a non-zero value,
-		// apply it as the new TaskMode (same mechanism as original)
+		// Mode switch: if a_MODE was set to a non-zero value, apply it as the new TaskMode
 		if ((modif > 0) && (b->ParamValue[a_MODE] > 0)) {
 		    b->TaskMode = (TaskModus)b->ParamValue[a_MODE];
 		    b->RunInit  = true;
@@ -558,19 +848,51 @@ static void BalancerParamEdit(Balancer_t *b) {
 }
 
 
-/* ---------- Vtable instance ---------- */
-// Connecting pointers to functions - NO static -> visible outside .c File
+/* ============================================================================
+ *  PUBLIC PROTOTYPE INSTANCE — wires the static methods into the method table
+ * ==========================================================================*/
+
+/**
+ * @brief   Const "prototype" Balancer with method pointers.
+ * @details NOT static -> visible outside this .c file. BalancerCreate()
+ *          dereferences this object and copies it into the user-supplied
+ *          Balancer_t to wire up methods (prototype-copy pattern,
+ *          identical to the one used by PIDContr_t in regler.c).
+ */
 const Balancer_t Balancer = {
-    .init          = BalancerInit,
-    .updatePitch   = BalancerUpdatePitch,
-    .updateDist    = BalancerUpdateDist,
-	.updateDisplay = BalancerUpdateDisplay,
-	.DispAlphaNumMPU = BalancerDispAlphaNumMPU,
-	.paramEdit     = BalancerParamEdit,
+    .init          		= BalancerInit,
+    .updatePitch   		= BalancerUpdatePitch,
+    .updateDist    		= BalancerUpdateDist,
+	.updateDisplay 		= BalancerUpdateDisplay,
+	.DispAlphaNumMPU 	= BalancerDispAlphaNumMPU,
+	.paramEdit     		= BalancerParamEdit,
 
 };
 
-/* ---------- Constructor ---------- */
+/* ============================================================================
+ *  PUBLIC CONSTRUCTOR
+ * ==========================================================================*/
+
+/**
+ * @fn		    BalancerCreate
+ *
+ * @brief       Construct a Balancer_t from a set of HW pointers.
+ *
+ * @details     Performs the OOP-in-C construction sequence:
+ *              copies the const Balancer prototype into *b,
+ *              stores the hardware-object pointers, then calls
+ *              Balancer.init(b) to configure ParamValue[] and reset
+ *              every operating field.
+ *
+ * @param[in]  	b      Pointer to a Balancer_t.
+ * @param[in]   imu    Pointer to MPU6050 object.
+ * @param[in]   tof    Pointer to TOF sensor object.
+ * @param[in]   stepL  Pointer to LEFT stepper object.
+ * @param[in]   stepR  Pointer to RIGHT stepper object.
+ * @param[in]   bat    Pointer to battery ADC channel object.
+ *
+ * @returns     ---
+ */
 void BalancerCreate(Balancer_t *b,
                      MPU6050_t *imu, TOFSensor_t *tof,
                      Stepper_t *stepL, Stepper_t *stepR,
