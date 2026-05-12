@@ -202,7 +202,7 @@ Variables</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Luis Brunn <a href="https://github.com/LuBru70">https://github.com/LuBru70</a> </dd></dl>
 <p>Defines the central <a class="el" href="#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> type, including hardware-object pointers, control objects, operating state, editable parameters, SysTick timers, and method pointers. It also declares the <a class="el" href="#a06340bca721fa86487f6d8b7b3a8e2e9" title="Different task modes of the Balancer state machine.">TaskModus</a> and <a class="el" href="#ad547998bdd197be00af18135927f247b" title="Index for Balancer_t ParamValue[].">ParamIdx</a> enumerations, the external <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> prototype instance, and the <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> constructor.</p>
 <dl class="section user"><dt>Architecture</dt><dd><ul>
-<li><a class="el" href="#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> is an aggregate following the OOP-in-C pattern: encapsulation, composition, and prototype-copy construction with function-pointer based method.</li>
+<li><a class="el" href="#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> is an aggregate following the OOP style C: encapsulation, composition, and prototype-copy construction with function-pointer based method.</li>
 <li>Hardware objects (<a class="el" href="i2c_m_p_u_8h.html#a98fc0a91548691d17216e0b8324d2a84">MPU6050_t</a>, <a class="el" href="i2c_t_o_f_8h.html#a0c25fd40b41f38a58aa3072046c4bb1a">TOFSensor_t</a>, <a class="el" href="i2c_a_m_i_s_8h.html#aab000490232d0b3238d330e09e440d5d">Stepper_t</a>, <a class="el" href="structanalog_ch__t.html">analogCh_t</a>) are aggregated by pointer. Their lifetime is owned by <a class="el" href="main_8c.html" title="Top-level application of the balancer firmware. Entry point and cooperative scheduler for the balance...">main.c</a>.</li>
 <li>Control objects (<a class="el" href="regler_8h.html#ad41d9bf7b5f020d488acb5d14e0bb6fa">PIDContr_t</a>, <a class="el" href="regler_8h.html#abd449e39c0bd05f28b5915c2beb714d7" title="Low Pass Filter using the weighted average calculation based on the fixed cycle time calculation,...">MeanVal_t</a>) are composed by value inside <a class="el" href="#a2311487c7f51c28e6371c709def8341c">Balancer_t</a>.</li>
 </ul>
@@ -361,7 +361,7 @@ Variables</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="ad547998bdd197be00af18135927f247ba58db84263a86a881afe661a399e3a8e5" name="ad547998bdd197be00af18135927f247ba58db84263a86a881afe661a399e3a8e5"></a>a_dSP&#160;</td><td class="fielddoc"><p>Distance setpoint [mm]. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ad547998bdd197be00af18135927f247ba8bdc2674257ebd2565ffba45d2c40b71" name="ad547998bdd197be00af18135927f247ba8bdc2674257ebd2565ffba45d2c40b71"></a>a_dLPF&#160;</td><td class="fielddoc"><p><a class="el" href="struct_mean_val.html">MeanVal</a> weight for TOF low-pass filter. </p>
+<tr><td class="fieldname"><a id="ad547998bdd197be00af18135927f247ba8bdc2674257ebd2565ffba45d2c40b71" name="ad547998bdd197be00af18135927f247ba8bdc2674257ebd2565ffba45d2c40b71"></a>a_dLPF&#160;</td><td class="fielddoc"><p><a class="el" href="struct_mean_val.html">MeanVal</a> weight for TOF low pass filter. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ad547998bdd197be00af18135927f247ba6b870c3fc1c5900f2c44cfe506f4f73a" name="ad547998bdd197be00af18135927f247ba6b870c3fc1c5900f2c44cfe506f4f73a"></a>a_distBlind&#160;</td><td class="fielddoc"><p>TOF blind-zone threshold [mm]; smaller readings are rejected. </p>
 </td></tr>
@@ -457,7 +457,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Constructor for the <a class="el" href="#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> aggregate object. </p>
-<p>Performs the OOP-in-C "construct" sequence:</p><ol type="1">
+<p>Performs the OOP C "construct" sequence:</p><ol type="1">
 <li>Copies the const <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> prototype into *b (this wires up the method-pointer table).</li>
 <li>Stores the supplied HW pointers into the aggregate.</li>
 <li>Calls <a class="el" href="struct_balancer.html#ab2c33fcf49bad0d05cef27981d256478" title="Reset state + load defaults.">Balancer.init(b)</a> to load defaultParam[] into ParamValue[], initialise the three PID controllers and the TOF low-pass filter, and reset all operating state to a known starting condition.</li>
@@ -500,7 +500,7 @@ Variables</h2></td></tr>
 <p>Const "prototype" instance carrying the method pointers. </p>
 <p>Defined in <a class="el" href="balancer__t_8c.html" title="Implementation of the Balancer_t aggregate object.">balancer_t.c</a>. Copied into every user-supplied <a class="el" href="#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> by <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> to wire up the method table.</p>
 <p>Const "prototype" instance carrying the method pointers.</p>
-<p>NOT static -&gt; visible outside this .c file. <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> dereferences this object and copies it into the user-supplied <a class="el" href="#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> to wire up method dispatch (prototype-copy pattern, identical to the one used by <a class="el" href="regler_8h.html#ad41d9bf7b5f020d488acb5d14e0bb6fa">PIDContr_t</a> in <a class="el" href="regler_8c.html" title="Regler V2.1.">regler.c</a>). </p>
+<p>NOT static -&gt; visible outside this .c file. <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> dereferences this object and copies it into the user-supplied <a class="el" href="#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> to wire up methods (prototype-copy, resembling to the one used by <a class="el" href="regler_8h.html#ad41d9bf7b5f020d488acb5d14e0bb6fa">PIDContr_t</a> in <a class="el" href="regler_8c.html" title="Regler V2.1.">regler.c</a>). </p>
 
 </div>
 </div>

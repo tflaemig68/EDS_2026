@@ -1,29 +1,4 @@
 var searchData=
 [
-  ['bala_0',['bala',['../main_8c.html#a20ed7126e0a14b1d093a4519f5069432',1,'main.c']]],
-  ['bala_5fdebug_1',['BALA_DEBUG',['../main_8c.html#aef87bf5ecb7d2a9cade94b87d46c9505',1,'main.c']]],
-  ['balancer_2',['Balancer',['../struct_balancer.html',1,'Balancer'],['../balancer__t_8h.html#aa6aa3a7caf8ad0084661a4c7f115f5bc',1,'Balancer:&#160;balancer_t.c'],['../balancer__t_8c.html#aa6aa3a7caf8ad0084661a4c7f115f5bc',1,'Balancer:&#160;balancer_t.c'],['../md_docs_2_rotary__push__button.html#autotoc_md6',1,'Balancer'],['../md_docs_2stepper.html',1,'I2C &amp; Stepper Modul [ARM Balancer]']]],
-  ['balancer_20ndash_20oop_20refactoring_20cascaded_20distance_20control_3',['Balancer &amp;ndash; OOP Refactoring &amp;amp; Cascaded Distance Control',['../md_docs_2_t3200__project__balancer___l_b.html',1,'']]],
-  ['balancer_5ft_4',['Balancer_t',['../balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c',1,'balancer_t.h']]],
-  ['balancer_5ft_5',['Part 1 &amp;ndash; OOP Refactoring (&lt;span class=&quot;tt&quot;&gt;balancer_t&lt;/span&gt;)',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md19',1,'']]],
-  ['balancer_5ft_20aggregates_6',['What &lt;span class=&quot;tt&quot;&gt;Balancer_t&lt;/span&gt; aggregates',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md22',1,'']]],
-  ['balancer_5ft_2ec_7',['balancer_t.c',['../balancer__t_8c.html',1,'']]],
-  ['balancer_5ft_2eh_8',['balancer_t.h',['../balancer__t_8h.html',1,'']]],
-  ['balancercreate_9',['BalancerCreate',['../balancer__t_8h.html#aa282d93c6355904e0b6416dfd0b8490e',1,'BalancerCreate(Balancer_t *b, MPU6050_t *imu, TOFSensor_t *tof, Stepper_t *stepL, Stepper_t *stepR, analogCh_t *bat):&#160;balancer_t.c'],['../balancer__t_8c.html#aa282d93c6355904e0b6416dfd0b8490e',1,'BalancerCreate(Balancer_t *b, MPU6050_t *imu, TOFSensor_t *tof, Stepper_t *stepL, Stepper_t *stepR, analogCh_t *bat):&#160;balancer_t.c']]],
-  ['balancerdispalphanummpu_10',['BalancerDispAlphaNumMPU',['../balancer__t_8c.html#a65fff74bd8376e149906b471ccaa4f55',1,'balancer_t.c']]],
-  ['balancerinit_11',['BalancerInit',['../balancer__t_8c.html#a9b0c24326fd5bd7e68ff039bf8c2b6ce',1,'balancer_t.c']]],
-  ['balancerparamedit_12',['BalancerParamEdit',['../balancer__t_8c.html#a680e1795be19fa5b01a97720f5d7aece',1,'balancer_t.c']]],
-  ['balancerupdatedisplay_13',['BalancerUpdateDisplay',['../balancer__t_8c.html#a287b87c9208d3e7f554f73a4dc61bfee',1,'balancer_t.c']]],
-  ['balancerupdatedist_14',['BalancerUpdateDist',['../balancer__t_8c.html#a9a14d00a0a49bb5ae55c7170a476b4a5',1,'balancer_t.c']]],
-  ['balancerupdatepitch_15',['BalancerUpdatePitch',['../balancer__t_8c.html#ab5b55152f3bcc51d7f4e5075022c337a',1,'balancer_t.c']]],
-  ['batstat_5ft_16',['BatStat_t',['../adc_b_a_t_8h.html#a9a85a5e6c8862eb03938052b064e4ab5',1,'adcBAT.h']]],
-  ['batstatus_17',['BatStatus',['../structanalog_ch__t.html#aee308d35e0fe17eba166383c91d0afb5',1,'analogCh_t']]],
-  ['batvolt_18',['BatVolt',['../structanalog_ch__t.html#a1adb5512ceefe2d4498f586c270bbec2',1,'analogCh_t']]],
-  ['bigfont_19',['BigFont',['../_s_t7735_8h.html#a606395c705e2200ffe98dfefbdcbc43e',1,'BigFont:&#160;ST7735.c'],['../_s_t7735_8c.html#a606395c705e2200ffe98dfefbdcbc43e',1,'BigFont:&#160;ST7735.c']]],
-  ['bitmapdatatype_20',['bitmapdatatype',['../_s_t7735_8h.html#a33a9b58332eda4a35ee87dc257c1419a',1,'ST7735.h']]],
-  ['black_21',['BLACK',['../_rotary_push_button_8h.html#a2e6f2b264229590debe98b5c71abe9daaf77fb67151d0c18d397069ad8c271ba3',1,'RotaryPushButton.h']]],
-  ['blue_22',['BLUE',['../_rotary_push_button_8h.html#a2e6f2b264229590debe98b5c71abe9daa35d6719cb4d7577c031b3d79057a1b79',1,'RotaryPushButton.h']]],
-  ['blue_23',['blue',['../struct_l_e_dio.html#a449c5be6b8af6b9022ad0fab28382def',1,'LEDio']]],
-  ['blue_5foff_24',['BLUE_off',['../_rotary_push_button_8h.html#a2e6f2b264229590debe98b5c71abe9daab98bd10255fd8f515cdeac80aa5c67da',1,'RotaryPushButton.h']]],
-  ['blue_5fon_25',['BLUE_on',['../_rotary_push_button_8h.html#a2e6f2b264229590debe98b5c71abe9daa74a000c7d831100dd845b9aa010fd4ad',1,'RotaryPushButton.h']]]
+  ['5_20—_20validation_0',['Stage 5 — Validation',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md40',1,'']]]
 ];

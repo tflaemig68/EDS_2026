@@ -113,7 +113,6 @@ $(function(){initNavTree('main_8c.html','',''); });
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:aef87bf5ecb7d2a9cade94b87d46c9505" id="r_aef87bf5ecb7d2a9cade94b87d46c9505"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#aef87bf5ecb7d2a9cade94b87d46c9505">BALA_DEBUG</a>&#160;&#160;&#160;0</td></tr>
-<tr class="memdesc:aef87bf5ecb7d2a9cade94b87d46c9505"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switch for frequent TFT prints.  <br /></td></tr>
 <tr class="memitem:acc426d0658b327281b5e6a9b9e37d227" id="r_acc426d0658b327281b5e6a9b9e37d227"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#acc426d0658b327281b5e6a9b9e37d227">StepPaCount</a>&#160;&#160;&#160;5</td></tr>
 <tr id="define-members-0" class="groupHeader"><td colspan="2"><div class="groupHeader">Expected I2C slave addresses</div></td></tr>
 <tr class="memitem:a40e1aadc89923f1dd7ac6cccf3588436" id="r_a40e1aadc89923f1dd7ac6cccf3588436"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a40e1aadc89923f1dd7ac6cccf3588436">i2cAddr_motL</a>&#160;&#160;&#160;0x61</td></tr>
@@ -172,8 +171,6 @@ based on reference main from Prof. Flämig </dd></dl>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Switch for frequent TFT prints. </p>
 
 </div>
 </div>
@@ -301,18 +298,18 @@ based on reference main from Prof. Flämig </dd></dl>
 
 <p><a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> firmware entry point. </p>
 <p>Performs peripheral initialisation in the same order as the reference (LED, both I2C buses, ADC, SysTick, SPI to TFT, TFT init+rotation+font, rotary encoder), constructs the central <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> aggregate object, sets up the SysTick countdown timers and enters the loop.</p>
-<p>Loop dispatch:</p><ul>
+<p>Loop:</p><ul>
 <li>Every 1 ms: timerTrigger -&gt; update countdown timers.</li>
 <li>Every iteration: bala.paramEdit (rotary encoder).</li>
 <li>StepTaskTimer expired: switch on bala.TaskMode and run the corresponding state.</li>
 <li>DispTaskTimer expired (700 ms): refresh the TFT diagnostic area (see the DispTask documentation on when and why this should be limited when active distance control).</li>
 </ul>
-<p>The state machine inside the StepTask switch: M_InitBat -&gt; read battery, transition. M_CheckI2cSlaves -&gt; drive CheckAndInitI2cSlaves; when ready, pick the best mode:</p><ul>
-<li>all of MPU+StepL+StepR -&gt; M_Bala,</li>
+<p>The state machine inside the StepTask switch: M_InitBat -&gt; read battery M_CheckI2cSlaves -&gt; drive CheckAndInitI2cSlaves; when ready, pick the best mode:</p><ul>
+<li>all of MPU+StepL+StepR -&gt; M_DistCtrl,</li>
 <li>else only TOF -&gt; M_DispTofData,</li>
 <li>else only MPU -&gt; M_DispMpuData. M_DispMpuData -&gt; show numeric IMU data. M_DispTofData -&gt; show distance. M_Bala -&gt; inner balance loop control. M_DistCtrl -&gt; inner balance + outer distance control. default -&gt; reset to M_InitBat.</li>
 </ul>
-<dl class="section return"><dt>Returns</dt><dd>int — never returns under normal operation (infinite loop). </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Program return value. This function normally never returns because the firmware runs inside an infinite loop. </dd></dl>
 
 </div>
 </div>

@@ -100,7 +100,7 @@ $(function(){initNavTree('struct_balancer.html','','struct_balancer-members'); }
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a01c71dabfd16707df44fe4ba7a71d763" id="r_a01c71dabfd16707df44fe4ba7a71d763"><td class="memItemLeft"><a class="el" href="i2c_m_p_u_8h.html#a98fc0a91548691d17216e0b8324d2a84">MPU6050_t</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a01c71dabfd16707df44fe4ba7a71d763">pIMU</a></td></tr>
-<tr class="memdesc:a01c71dabfd16707df44fe4ba7a71d763"><td class="mdescLeft">&#160;</td><td class="mdescRight">IMU (<a class="el" href="struct_m_p_u6050.html">MPU6050</a>) — pitch/accel/gyro.  <br /></td></tr>
+<tr class="memdesc:a01c71dabfd16707df44fe4ba7a71d763"><td class="mdescLeft">&#160;</td><td class="mdescRight">IMU (<a class="el" href="struct_m_p_u6050.html">MPU6050</a>) - pitch/accel/gyro.  <br /></td></tr>
 <tr class="memitem:af6bb8fedac4f6d70034b84ce8a275f94" id="r_af6bb8fedac4f6d70034b84ce8a275f94"><td class="memItemLeft"><a class="el" href="i2c_t_o_f_8h.html#a0c25fd40b41f38a58aa3072046c4bb1a">TOFSensor_t</a> *&#160;</td><td class="memItemRight"><a class="el" href="#af6bb8fedac4f6d70034b84ce8a275f94">pTOF</a></td></tr>
 <tr class="memdesc:af6bb8fedac4f6d70034b84ce8a275f94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time-of-Flight sensor (VL53L0X).  <br /></td></tr>
 <tr class="memitem:a9a455c564ac22761cb60631f6fff327e" id="r_a9a455c564ac22761cb60631f6fff327e"><td class="memItemLeft"><a class="el" href="i2c_a_m_i_s_8h.html#aab000490232d0b3238d330e09e440d5d">Stepper_t</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a9a455c564ac22761cb60631f6fff327e">pStepL</a></td></tr>
@@ -116,7 +116,7 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aaa94be3a38e03c153026349bd617234c" id="r_aaa94be3a38e03c153026349bd617234c"><td class="memItemLeft"><a class="el" href="regler_8h.html#ad41d9bf7b5f020d488acb5d14e0bb6fa">PIDContr_t</a>&#160;</td><td class="memItemRight"><a class="el" href="#aaa94be3a38e03c153026349bd617234c">PID_velo</a></td></tr>
 <tr class="memdesc:aaa94be3a38e03c153026349bd617234c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Middle loop: velocity -&gt; target accel.  <br /></td></tr>
 <tr class="memitem:a1c58647ca58438580513a902650b0b92" id="r_a1c58647ca58438580513a902650b0b92"><td class="memItemLeft"><a class="el" href="regler_8h.html#abd449e39c0bd05f28b5915c2beb714d7">MeanVal_t</a>&#160;</td><td class="memItemRight"><a class="el" href="#a1c58647ca58438580513a902650b0b92">LPF_dist</a></td></tr>
-<tr class="memdesc:a1c58647ca58438580513a902650b0b92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Low-pass filter on TOF distance.  <br /></td></tr>
+<tr class="memdesc:a1c58647ca58438580513a902650b0b92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lowpass filter on TOF distance.  <br /></td></tr>
 <tr class="memitem:ab2fc60f78409c2ca4eb7646a76f37dd9" id="r_ab2fc60f78409c2ca4eb7646a76f37dd9"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#ab2fc60f78409c2ca4eb7646a76f37dd9">pitchOffset</a></td></tr>
 <tr class="memdesc:ab2fc60f78409c2ca4eb7646a76f37dd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output of velocity loop [rad]; subtracted from measured pitch to form error_phi (i.e. acts as the pitch setpoint).  <br /></td></tr>
 <tr class="memitem:a371359a24d8560dbddcd4ff63fd41f9a" id="r_a371359a24d8560dbddcd4ff63fd41f9a"><td class="memItemLeft">float&#160;</td><td class="memItemRight"><a class="el" href="#a371359a24d8560dbddcd4ff63fd41f9a">distSetpoint</a></td></tr>
@@ -190,7 +190,7 @@ Public Attributes</h2></td></tr>
 <li>the editable parameters,</li>
 <li>the public method table (function pointers).</li>
 </ul>
-<p>Method dispatch follows the prototype-copy pattern: a const instance "Balancer" in <a class="el" href="balancer__t_8c.html" title="Implementation of the Balancer_t aggregate object.">balancer_t.c</a> holds the function pointers, <a class="el" href="balancer__t_8h.html#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> copies it into the user-supplied <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a>, then overwrites the HW pointers and calls <a class="el" href="#ab2c33fcf49bad0d05cef27981d256478" title="Reset state + load defaults.">init()</a>.</p>
+<p>Method dispatch follows the prototype-copy approach: a const instance "Balancer" in <a class="el" href="balancer__t_8c.html" title="Implementation of the Balancer_t aggregate object.">balancer_t.c</a> holds the function pointers, <a class="el" href="balancer__t_8h.html#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> copies it into the user-supplied <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a>, then overwrites the HW pointers and calls <a class="el" href="#ab2c33fcf49bad0d05cef27981d256478" title="Reset state + load defaults.">init()</a>.</p>
 <p>Lifetime: a single static <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> named "bala" lives in <a class="el" href="main_8c.html" title="Top-level application of the balancer firmware. Entry point and cooperative scheduler for the balance...">main.c</a>. </p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="ac9a4b7a0a9cd62b91b85b9769a298702" name="ac9a4b7a0a9cd62b91b85b9769a298702"></a>
@@ -373,7 +373,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Low-pass filter on TOF distance. </p>
+<p>Lowpass filter on TOF distance. </p>
 
 </div>
 </div>
@@ -499,7 +499,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>IMU (<a class="el" href="struct_m_p_u6050.html">MPU6050</a>) — pitch/accel/gyro. </p>
+<p>IMU (<a class="el" href="struct_m_p_u6050.html">MPU6050</a>) - pitch/accel/gyro. </p>
 
 </div>
 </div>

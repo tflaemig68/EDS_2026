@@ -112,7 +112,7 @@ Macros</h2></td></tr>
 <tr class="memdesc:a0a328104e8b1760d5d56c8a37e19884d"><td class="mdescLeft">&#160;</td><td class="mdescRight">|pitch| &lt; this: balanced  <br /></td></tr>
 <tr id="define-members-0" class="groupHeader"><td colspan="2"><div class="groupHeader">Task-cycle times (compile-time constants, file-private)</div></td></tr>
 <tr class="memitem:a450d1fe850b6576b29e1f6fca4dacb39" id="r_a450d1fe850b6576b29e1f6fca4dacb39"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a450d1fe850b6576b29e1f6fca4dacb39">StepTaskTimeSet</a>&#160;&#160;&#160;7UL</td></tr>
-<tr class="memdesc:a450d1fe850b6576b29e1f6fca4dacb39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inner state machine [ms] (communication to stepper takes &lt;1ms therefore total StepTaskTime = 7ms).  <br /></td></tr>
+<tr class="memdesc:a450d1fe850b6576b29e1f6fca4dacb39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inner state machine [ms] (communication to stepper takes &lt;1ms; chosen StepTaskTime = 7ms).  <br /></td></tr>
 <tr class="memitem:a1ecfa55892d6842607b331a9395576c6" id="r_a1ecfa55892d6842607b331a9395576c6"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a1ecfa55892d6842607b331a9395576c6">DistCtrlTaskTimeSet</a>&#160;&#160;&#160;49UL</td></tr>
 <tr class="memdesc:a1ecfa55892d6842607b331a9395576c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outer (distance) loop [ms] (currently 7x inner StepTaskTime).  <br /></td></tr>
 <tr class="memitem:a04169d0d6b4f2f23f55811a06b03d751" id="r_a04169d0d6b4f2f23f55811a06b03d751"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a04169d0d6b4f2f23f55811a06b03d751">DispTaskTimeSet</a>&#160;&#160;&#160;700UL</td></tr>
@@ -133,15 +133,10 @@ Macros</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:abe9211e4e2a1eb2ea5de0f0ae0a796df" id="r_abe9211e4e2a1eb2ea5de0f0ae0a796df"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#abe9211e4e2a1eb2ea5de0f0ae0a796df">StepperIHold</a> (<a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> *b, bool OnSwitch)</td></tr>
 <tr class="memitem:a9b0c24326fd5bd7e68ff039bf8c2b6ce" id="r_a9b0c24326fd5bd7e68ff039bf8c2b6ce"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a9b0c24326fd5bd7e68ff039bf8c2b6ce">BalancerInit</a> (<a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> *b)</td></tr>
-<tr class="memdesc:a9b0c24326fd5bd7e68ff039bf8c2b6ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> to a clean starting condition.  <br /></td></tr>
 <tr class="memitem:a3673a8724a187912c9bdd9a31d6a1566" id="r_a3673a8724a187912c9bdd9a31d6a1566"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a3673a8724a187912c9bdd9a31d6a1566">dispMPUBat</a> (<a class="el" href="i2c_m_p_u_8h.html#a98fc0a91548691d17216e0b8324d2a84">MPU6050_t</a> *pMPU1, <a class="el" href="structanalog_ch__t.html">analogCh_t</a> *pADChn)</td></tr>
-<tr class="memdesc:a3673a8724a187912c9bdd9a31d6a1566"><td class="mdescLeft">&#160;</td><td class="mdescRight">One-line status with IMU temperature and battery voltage.  <br /></td></tr>
 <tr class="memitem:a65fff74bd8376e149906b471ccaa4f55" id="r_a65fff74bd8376e149906b471ccaa4f55"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a65fff74bd8376e149906b471ccaa4f55">BalancerDispAlphaNumMPU</a> (<a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> *b)</td></tr>
-<tr class="memdesc:a65fff74bd8376e149906b471ccaa4f55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Display raw MPU accel components (X/Y/Z) as numeric values.  <br /></td></tr>
 <tr class="memitem:a9fc42e3ad46810a8d82f30a3e116e2f4" id="r_a9fc42e3ad46810a8d82f30a3e116e2f4"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a9fc42e3ad46810a8d82f30a3e116e2f4">visualisationTOF</a> (<a class="el" href="i2c_t_o_f_8h.html#a0c25fd40b41f38a58aa3072046c4bb1a">TOFSensor_t</a> *TOFSENS)</td></tr>
-<tr class="memdesc:a9fc42e3ad46810a8d82f30a3e116e2f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">TOF-distance display (cm).  <br /></td></tr>
 <tr class="memitem:ab5b55152f3bcc51d7f4e5075022c337a" id="r_ab5b55152f3bcc51d7f4e5075022c337a"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ab5b55152f3bcc51d7f4e5075022c337a">BalancerUpdatePitch</a> (<a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> *b)</td></tr>
-<tr class="memdesc:ab5b55152f3bcc51d7f4e5075022c337a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inner balance loop.  <br /></td></tr>
 <tr class="memitem:a9a14d00a0a49bb5ae55c7170a476b4a5" id="r_a9a14d00a0a49bb5ae55c7170a476b4a5"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a9a14d00a0a49bb5ae55c7170a476b4a5">BalancerUpdateDist</a> (<a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> *b)</td></tr>
 <tr class="memitem:a287b87c9208d3e7f554f73a4dc61bfee" id="r_a287b87c9208d3e7f554f73a4dc61bfee"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a287b87c9208d3e7f554f73a4dc61bfee">BalancerUpdateDisplay</a> (<a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> *b)</td></tr>
 <tr class="memitem:a6655654bc714bb55dbb51fd525916301" id="r_a6655654bc714bb55dbb51fd525916301"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a6655654bc714bb55dbb51fd525916301">applyParams</a> (<a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> *b)</td></tr>
@@ -155,7 +150,7 @@ Variables</h2></td></tr>
 <tr class="memdesc:a40d6d04c58a37569ae892f7fbc3e37d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outer (distance) control loop sample time in ms.  <br /></td></tr>
 <tr class="memitem:a7d0e5026712c5c7be74c75b6fa5338e6" id="r_a7d0e5026712c5c7be74c75b6fa5338e6"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#a7d0e5026712c5c7be74c75b6fa5338e6">StepTaskTime</a> []</td></tr>
 <tr class="memdesc:a7d0e5026712c5c7be74c75b6fa5338e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">StepTask cycle-time table (same order as <a class="el" href="balancer__t_8h.html#a06340bca721fa86487f6d8b7b3a8e2e9" title="Different task modes of the Balancer state machine.">TaskModus</a>).  <br /></td></tr>
-<tr class="memitem:a7cc894fad3533cf4b92310f53f915cd9" id="r_a7cc894fad3533cf4b92310f53f915cd9"><td class="memItemLeft">const int16_t&#160;</td><td class="memItemRight"><a class="el" href="#a7cc894fad3533cf4b92310f53f915cd9">rad2step</a> = 520</td></tr>
+<tr class="memitem:a7cc894fad3533cf4b92310f53f915cd9" id="r_a7cc894fad3533cf4b92310f53f915cd9"><td class="memItemLeft">static const int16_t&#160;</td><td class="memItemRight"><a class="el" href="#a7cc894fad3533cf4b92310f53f915cd9">rad2step</a> = 520</td></tr>
 <tr class="memdesc:a7cc894fad3533cf4b92310f53f915cd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Conversion gain to translate pitch value to stepper step counts.  <br /></td></tr>
 <tr class="memitem:a77ecd3c26eb5c48793d8691e0912e014" id="r_a77ecd3c26eb5c48793d8691e0912e014"><td class="memItemLeft">static const float&#160;</td><td class="memItemRight"><a class="el" href="#a77ecd3c26eb5c48793d8691e0912e014">defaultParam</a> [<a class="el" href="balancer__t_8h.html#a3fc2c43446ec463cb87f528005dc312a">PARAM_COUNT</a>]</td></tr>
 <tr class="memdesc:a77ecd3c26eb5c48793d8691e0912e014"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default parameter values, copied into ParamValue[] at init().  <br /></td></tr>
@@ -164,17 +159,17 @@ Variables</h2></td></tr>
 <tr class="memitem:a44b0dbf76432c17923ec8d14c0f30570" id="r_a44b0dbf76432c17923ec8d14c0f30570"><td class="memItemLeft">static const float&#160;</td><td class="memItemRight"><a class="el" href="#a44b0dbf76432c17923ec8d14c0f30570">ParamScale</a> [<a class="el" href="balancer__t_8h.html#a3fc2c43446ec463cb87f528005dc312a">PARAM_COUNT</a>]</td></tr>
 <tr class="memdesc:a44b0dbf76432c17923ec8d14c0f30570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameter scale factor for rotary encoder editing.  <br /></td></tr>
 <tr class="memitem:aa6aa3a7caf8ad0084661a4c7f115f5bc" id="r_aa6aa3a7caf8ad0084661a4c7f115f5bc"><td class="memItemLeft">const <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a>&#160;</td><td class="memItemRight"><a class="el" href="#aa6aa3a7caf8ad0084661a4c7f115f5bc">Balancer</a></td></tr>
-<tr class="memdesc:aa6aa3a7caf8ad0084661a4c7f115f5bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Const "prototype" <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> carrying ONLY the method pointers.  <br /></td></tr>
+<tr class="memdesc:aa6aa3a7caf8ad0084661a4c7f115f5bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Const "prototype" <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> with method pointers.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> aggregate object. </p>
 <dl class="section author"><dt>Author</dt><dd>Luis Brunn <a href="https://github.com/LuBru70">https://github.com/LuBru70</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>March 2026</dd></dl>
-<p>This file implements the OOP-in-C style <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> module. It contains the default parameter tables, the module-level timing constants, the method implementations assigned to the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> function pointers, private helper functions, the const <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> prototype instance, and the <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> constructor.</p>
+<p>This file implements the OOP style <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> module. It contains the default parameter tables, the module-level timing constants, the method implementations assigned to the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> function pointers, private helper functions, the const <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> prototype instance, and the <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> constructor.</p>
 <dl class="section user"><dt>Module responsibilities</dt><dd><ul>
 <li>Defines the default values for the 25 tunable parameters: defaultParam[], ParamTitle[] and ParamScale[]. The element order must stay synchronized with the <a class="el" href="balancer__t_8h.html#ad547998bdd197be00af18135927f247b" title="Index for Balancer_t ParamValue[].">ParamIdx</a> enum declared in <a class="el" href="balancer__t_8h.html" title="Header of the Balancer_t aggregate.">balancer_t.h</a>.</li>
-<li>Implements the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> methods: <a class="el" href="#a9b0c24326fd5bd7e68ff039bf8c2b6ce" title="Reset the Balancer_t to a clean starting condition.">BalancerInit()</a>, <a class="el" href="#ab5b55152f3bcc51d7f4e5075022c337a" title="Inner balance loop.">BalancerUpdatePitch()</a>, <a class="el" href="#a9a14d00a0a49bb5ae55c7170a476b4a5">BalancerUpdateDist()</a>, <a class="el" href="#a287b87c9208d3e7f554f73a4dc61bfee">BalancerUpdateDisplay()</a>, <a class="el" href="#a680e1795be19fa5b01a97720f5d7aece">BalancerParamEdit()</a> and <a class="el" href="#a65fff74bd8376e149906b471ccaa4f55" title="Display raw MPU accel components (X/Y/Z) as numeric values.">BalancerDispAlphaNumMPU()</a>.</li>
-<li>Provides private static helper functions: <a class="el" href="#abe9211e4e2a1eb2ea5de0f0ae0a796df">StepperIHold()</a>, <a class="el" href="#a3673a8724a187912c9bdd9a31d6a1566" title="One-line status with IMU temperature and battery voltage.">dispMPUBat()</a>, <a class="el" href="#a9fc42e3ad46810a8d82f30a3e116e2f4" title="TOF-distance display (cm).">visualisationTOF()</a> and <a class="el" href="#a6655654bc714bb55dbb51fd525916301">applyParams()</a>.</li>
+<li>Implements the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> methods: <a class="el" href="#a9b0c24326fd5bd7e68ff039bf8c2b6ce">BalancerInit()</a>, <a class="el" href="#ab5b55152f3bcc51d7f4e5075022c337a">BalancerUpdatePitch()</a>, <a class="el" href="#a9a14d00a0a49bb5ae55c7170a476b4a5">BalancerUpdateDist()</a>, <a class="el" href="#a287b87c9208d3e7f554f73a4dc61bfee">BalancerUpdateDisplay()</a>, <a class="el" href="#a680e1795be19fa5b01a97720f5d7aece">BalancerParamEdit()</a> and <a class="el" href="#a65fff74bd8376e149906b471ccaa4f55">BalancerDispAlphaNumMPU()</a>.</li>
+<li>Provides private static helper functions: <a class="el" href="#abe9211e4e2a1eb2ea5de0f0ae0a796df">StepperIHold()</a>, <a class="el" href="#a3673a8724a187912c9bdd9a31d6a1566">dispMPUBat()</a>, <a class="el" href="#a9fc42e3ad46810a8d82f30a3e116e2f4">visualisationTOF()</a> and <a class="el" href="#a6655654bc714bb55dbb51fd525916301">applyParams()</a>.</li>
 <li>Defines the const <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> prototype instance. This prototype carries the method-pointer table and is copied into every user-supplied <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> instance inside <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a>.</li>
 <li>Provides <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a>, which connects the externally owned hardware objects from <a class="el" href="main_8c.html" title="Top-level application of the balancer firmware. Entry point and cooperative scheduler for the balance...">main.c</a> to the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> aggregate and initializes the object.</li>
 </ul>
@@ -186,9 +181,9 @@ Variables</h2></td></tr>
 </ul>
 </dd></dl>
 <p>The corresponding sample times in seconds are provided by TA_INNER and TA_OUTER and are used when initializing the <a class="el" href="regler_8h.html#ad41d9bf7b5f020d488acb5d14e0bb6fa">PIDContr_t</a> objects.</p>
-<dl class="section user"><dt>Cascade integration</dt><dd>The distance-control extension is coupled into the original pitch-control loop through b-&gt;pitchOffset. <a class="el" href="#a9a14d00a0a49bb5ae55c7170a476b4a5">BalancerUpdateDist()</a> computes this value from the outer distance loop and the middle velocity loop. <a class="el" href="#ab5b55152f3bcc51d7f4e5075022c337a" title="Inner balance loop.">BalancerUpdatePitch()</a> then subtracts the clamped pitch offset from the measured pitch before the inner PID_phi controller is evaluated.</dd></dl>
-<p>In M_Bala, <a class="el" href="#a9a14d00a0a49bb5ae55c7170a476b4a5">BalancerUpdateDist()</a> is not executed, so the pitch controller behaves as the original balancing loop. When the selected mode is not M_DistCtrl, <a class="el" href="#a287b87c9208d3e7f554f73a4dc61bfee">BalancerUpdateDisplay()</a> resets the distance-control state, including pitchOffset and tarVelo, to avoid reusing stale outer-loop values.</p>
-<p>If a fall is detected in <a class="el" href="#ab5b55152f3bcc51d7f4e5075022c337a" title="Inner balance loop.">BalancerUpdatePitch()</a>, the distance and velocity controller states are additionally reset so that accumulated outer-loop integrator values do not remain active after recovery.</p>
+<dl class="section user"><dt>Cascade integration</dt><dd>The distance-control extension is coupled into the original pitch-control loop through b-&gt;pitchOffset. <a class="el" href="#a9a14d00a0a49bb5ae55c7170a476b4a5">BalancerUpdateDist()</a> computes this value from the outer distance loop and the middle velocity loop. <a class="el" href="#ab5b55152f3bcc51d7f4e5075022c337a">BalancerUpdatePitch()</a> then subtracts the clamped pitch offset from the measured pitch before the inner PID_phi controller is evaluated.</dd></dl>
+<p>In M_Bala, <a class="el" href="#a9a14d00a0a49bb5ae55c7170a476b4a5">BalancerUpdateDist()</a> is not executed, so the pitch controller behaves as the original balancing loop. When the selected mode is not M_DistCtrl, <a class="el" href="#a680e1795be19fa5b01a97720f5d7aece">BalancerParamEdit()</a>() resets the distance-control state, including pitchOffset and tarVelo, to avoid reusing stale outer-loop values.</p>
+<p>If a fall is detected in <a class="el" href="#ab5b55152f3bcc51d7f4e5075022c337a">BalancerUpdatePitch()</a>, the distance and velocity controller states are additionally reset so that accumulated outer-loop integrator values do not remain active after recovery.</p>
 <dl class="section user"><dt>Visibility</dt><dd>Functions that are only used inside this translation unit are declared static. The public <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> interface is provided through <a class="el" href="balancer__t_8h.html" title="Header of the Balancer_t aggregate.">balancer_t.h</a>. The main public construction entry point is <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a>; the method pointers themselves are initialized from the const <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> prototype.</dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>This software is licensed based on CC BY-NC-SA 4.0 </dd></dl>
 </div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
@@ -298,7 +293,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Inner state machine [ms] (communication to stepper takes &lt;1ms therefore total StepTaskTime = 7ms). </p>
+<p>Inner state machine [ms] (communication to stepper takes &lt;1ms; chosen StepTaskTime = 7ms). </p>
 
 </div>
 </div>
@@ -416,7 +411,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Constructor for the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> aggregate object. </p>
-<p>Performs the OOP-in-C "construct" sequence:</p><ol type="1">
+<p>Performs the OOP C "construct" sequence:</p><ol type="1">
 <li>Copies the const <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> prototype into *b (this wires up the method-pointer table).</li>
 <li>Stores the supplied HW pointers into the aggregate.</li>
 <li>Calls <a class="el" href="struct_balancer.html#ab2c33fcf49bad0d05cef27981d256478" title="Reset state + load defaults.">Balancer.init(b)</a> to load defaultParam[] into ParamValue[], initialise the three PID controllers and the TOF low-pass filter, and reset all operating state to a known starting condition.</li>
@@ -458,17 +453,6 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Display raw MPU accel components (X/Y/Z) as numeric values. </p>
-<p>@function BalancerDispAlphaNumMPU</p>
-<p>Used by the M_DispMpuData diagnostic/debugging mode. Triggers a fresh accel read on the IMU, then prints the three axes one above the other at fixed TFT coordinates.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>Pointer to the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a>.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>&mdash; (Written prints on the TFT display) </dd></dl>
-
 </div>
 </div>
 <a id="a9b0c24326fd5bd7e68ff039bf8c2b6ce" name="a9b0c24326fd5bd7e68ff039bf8c2b6ce"></a>
@@ -493,23 +477,6 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Reset the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> to a clean starting condition. </p>
-<p>@function BalancerInit</p>
-<p>Called once by <a class="el" href="#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> and again whenever a full re-init is required. Performs:</p><ol type="1">
-<li>Copy defaultParam[] into ParamValue[].</li>
-<li>Initialise PID_phi, PID_dist, PID_velo with the parameter values just loaded and the proper TA.</li>
-<li>Clear the TOF distance low-pass filter.</li>
-<li>Reset every operating-state field (mode, flags, timers, motor positions, route counters).</li>
-</ol>
-<p>After return the <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> is in M_InitBat, with RunInit set so the first M_Bala / M_DistCtrl entry will perform its initialisation.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>Pointer to the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> to initialise.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>&mdash; </dd></dl>
 
 </div>
 </div>
@@ -611,46 +578,6 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Inner balance loop. </p>
-<p>@function BalancerUpdatePitch</p>
-<p>Translation of "case M_Bala" from the reference into a method of the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> object. Sequence:</p>
-<ol type="1">
-<li>RunInit branch (on entering M_Bala):<ul>
-<li>Switch TFT to landscape-flip and paint header.</li>
-<li>Activate stepper hold current and zero positions.</li>
-<li>Push parameter values into the IMU (pitchZero, swLowPassFilt, pitchFilt, HW DLPF).</li>
-<li>(Re-)initialise PID_phi.</li>
-<li>Set the IMU axis remap (RPY[2,3,-1]) which matches the way the MPU is mounted on this robot.</li>
-<li>Set IMU integration time-base.</li>
-</ul>
-</li>
-<li>Read pitch from the IMU and run fall detection (|pitch| &gt; PITCH_FALL_RAD -&gt; robot fallen):<ul>
-<li>Re-init PID_phi and clear PID_dist/PID_velo to drop integrator wind-up accumulated during the fall.</li>
-<li>Reduce stepper current (relax the motors).</li>
-<li>return.</li>
-</ul>
-</li>
-<li>Determine "actively balancing" state:<ul>
-<li>|pitch| &lt; PITCH_ACTIVE -&gt; activeMove = true.</li>
-<li>Otherwise hold current is kept on but no motor command is issued.</li>
-</ul>
-</li>
-<li>Active PID (pitch) step:<ul>
-<li>Clamp pitchOffset to +/- a_pClamp so the outer loop can never destabilise the inner loop.</li>
-<li>error_phi = pitch - pitchOffset.</li>
-<li>setPitch = rad2step * PID_phi.run(error_phi).</li>
-<li>Once activeMove is asserted, command ONE motor (left/right alternating via stepRenable toggle)- This keeps the per-call I2C load below the 7 ms timing.</li>
-</ul>
-</li>
-</ol>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>Pointer to the <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> object.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>&mdash; </dd></dl>
-
 </div>
 </div>
 <a id="a3673a8724a187912c9bdd9a31d6a1566" name="a3673a8724a187912c9bdd9a31d6a1566"></a>
@@ -679,18 +606,6 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>One-line status with IMU temperature and battery voltage. </p>
-<p>@function dispMPUBat</p>
-<p>Reads the temperature from the mpuGetTemp and the latest battery voltage from the ADC channel (getBatVoltage). Set print color depending on the battery status (green = ok, yellow = half, red = empty/undervolt/overvolt).</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">pMPU1</td><td>Pointer to the <a class="el" href="struct_m_p_u6050.html">MPU6050</a> object. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pADChn</td><td>Pointer to the battery ADC channel object.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>&mdash; (Written prints on the TFT display) </dd></dl>
 
 </div>
 </div>
@@ -727,7 +642,7 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>&mdash; function that toggles the stepper holding current file private (static) and takes Balancer_t* so accessing b-&gt;pStepL and R is possible </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>&mdash; function that toggles the stepper holding current Takes Balancer_t* so accessing b-&gt;pStepL and R is possible </dd></dl>
 
 </div>
 </div>
@@ -754,16 +669,6 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>TOF-distance display (cm). </p>
-<p>@function visualisationTOF</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">TOFSENS</td><td>Pointer to the <a class="el" href="i2c_t_o_f_8h.html#a0c25fd40b41f38a58aa3072046c4bb1a">TOFSensor_t</a></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>&mdash; (Written prints on the TFT display) </dd></dl>
-
 </div>
 </div>
 <a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Variable Documentation</h2>
@@ -785,18 +690,17 @@ Variables</h2></td></tr>
 <div class="line">    .updateDisplay      = <a class="code hl_function" href="#a287b87c9208d3e7f554f73a4dc61bfee">BalancerUpdateDisplay</a>,</div>
 <div class="line">    .DispAlphaNumMPU    = <a class="code hl_function" href="#a65fff74bd8376e149906b471ccaa4f55">BalancerDispAlphaNumMPU</a>,</div>
 <div class="line">    .paramEdit          = <a class="code hl_function" href="#a680e1795be19fa5b01a97720f5d7aece">BalancerParamEdit</a>,</div>
-<div class="line"> </div>
 <div class="line">}</div>
-<div class="ttc" id="abalancer__t_8c_html_a287b87c9208d3e7f554f73a4dc61bfee"><div class="ttname"><a href="#a287b87c9208d3e7f554f73a4dc61bfee">BalancerUpdateDisplay</a></div><div class="ttdeci">static void BalancerUpdateDisplay(Balancer_t *b)</div><div class="ttdef"><b>Definition</b> balancer_t.c:702</div></div>
-<div class="ttc" id="abalancer__t_8c_html_a65fff74bd8376e149906b471ccaa4f55"><div class="ttname"><a href="#a65fff74bd8376e149906b471ccaa4f55">BalancerDispAlphaNumMPU</a></div><div class="ttdeci">static void BalancerDispAlphaNumMPU(Balancer_t *b)</div><div class="ttdoc">Display raw MPU accel components (X/Y/Z) as numeric values.</div><div class="ttdef"><b>Definition</b> balancer_t.c:368</div></div>
-<div class="ttc" id="abalancer__t_8c_html_a680e1795be19fa5b01a97720f5d7aece"><div class="ttname"><a href="#a680e1795be19fa5b01a97720f5d7aece">BalancerParamEdit</a></div><div class="ttdeci">static void BalancerParamEdit(Balancer_t *b)</div><div class="ttdef"><b>Definition</b> balancer_t.c:804</div></div>
-<div class="ttc" id="abalancer__t_8c_html_a9a14d00a0a49bb5ae55c7170a476b4a5"><div class="ttname"><a href="#a9a14d00a0a49bb5ae55c7170a476b4a5">BalancerUpdateDist</a></div><div class="ttdeci">static void BalancerUpdateDist(Balancer_t *b)</div><div class="ttdef"><b>Definition</b> balancer_t.c:613</div></div>
-<div class="ttc" id="abalancer__t_8c_html_a9b0c24326fd5bd7e68ff039bf8c2b6ce"><div class="ttname"><a href="#a9b0c24326fd5bd7e68ff039bf8c2b6ce">BalancerInit</a></div><div class="ttdeci">static void BalancerInit(Balancer_t *b)</div><div class="ttdoc">Reset the Balancer_t to a clean starting condition.</div><div class="ttdef"><b>Definition</b> balancer_t.c:266</div></div>
-<div class="ttc" id="abalancer__t_8c_html_ab5b55152f3bcc51d7f4e5075022c337a"><div class="ttname"><a href="#ab5b55152f3bcc51d7f4e5075022c337a">BalancerUpdatePitch</a></div><div class="ttdeci">static void BalancerUpdatePitch(Balancer_t *b)</div><div class="ttdoc">Inner balance loop.</div><div class="ttdef"><b>Definition</b> balancer_t.c:451</div></div>
+<div class="ttc" id="abalancer__t_8c_html_a287b87c9208d3e7f554f73a4dc61bfee"><div class="ttname"><a href="#a287b87c9208d3e7f554f73a4dc61bfee">BalancerUpdateDisplay</a></div><div class="ttdeci">static void BalancerUpdateDisplay(Balancer_t *b)</div><div class="ttdef"><b>Definition</b> balancer_t.c:701</div></div>
+<div class="ttc" id="abalancer__t_8c_html_a65fff74bd8376e149906b471ccaa4f55"><div class="ttname"><a href="#a65fff74bd8376e149906b471ccaa4f55">BalancerDispAlphaNumMPU</a></div><div class="ttdeci">static void BalancerDispAlphaNumMPU(Balancer_t *b)</div><div class="ttdef"><b>Definition</b> balancer_t.c:366</div></div>
+<div class="ttc" id="abalancer__t_8c_html_a680e1795be19fa5b01a97720f5d7aece"><div class="ttname"><a href="#a680e1795be19fa5b01a97720f5d7aece">BalancerParamEdit</a></div><div class="ttdeci">static void BalancerParamEdit(Balancer_t *b)</div><div class="ttdef"><b>Definition</b> balancer_t.c:802</div></div>
+<div class="ttc" id="abalancer__t_8c_html_a9a14d00a0a49bb5ae55c7170a476b4a5"><div class="ttname"><a href="#a9a14d00a0a49bb5ae55c7170a476b4a5">BalancerUpdateDist</a></div><div class="ttdeci">static void BalancerUpdateDist(Balancer_t *b)</div><div class="ttdef"><b>Definition</b> balancer_t.c:611</div></div>
+<div class="ttc" id="abalancer__t_8c_html_a9b0c24326fd5bd7e68ff039bf8c2b6ce"><div class="ttname"><a href="#a9b0c24326fd5bd7e68ff039bf8c2b6ce">BalancerInit</a></div><div class="ttdeci">static void BalancerInit(Balancer_t *b)</div><div class="ttdef"><b>Definition</b> balancer_t.c:265</div></div>
+<div class="ttc" id="abalancer__t_8c_html_ab5b55152f3bcc51d7f4e5075022c337a"><div class="ttname"><a href="#ab5b55152f3bcc51d7f4e5075022c337a">BalancerUpdatePitch</a></div><div class="ttdeci">static void BalancerUpdatePitch(Balancer_t *b)</div><div class="ttdef"><b>Definition</b> balancer_t.c:449</div></div>
 </div><!-- fragment -->
-<p>Const "prototype" <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> carrying ONLY the method pointers. </p>
+<p>Const "prototype" <a class="el" href="struct_balancer.html" title="Central aggregate object of the balancer features.">Balancer</a> with method pointers. </p>
 <p>Const "prototype" instance carrying the method pointers.</p>
-<p>NOT static -&gt; visible outside this .c file. <a class="el" href="balancer__t_8h.html#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> dereferences this object and copies it into the user-supplied <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> to wire up method dispatch (prototype-copy pattern, identical to the one used by <a class="el" href="regler_8h.html#ad41d9bf7b5f020d488acb5d14e0bb6fa">PIDContr_t</a> in <a class="el" href="regler_8c.html" title="Regler V2.1.">regler.c</a>). </p>
+<p>NOT static -&gt; visible outside this .c file. <a class="el" href="balancer__t_8h.html#aa282d93c6355904e0b6416dfd0b8490e" title="Constructor for the Balancer_t aggregate object.">BalancerCreate()</a> dereferences this object and copies it into the user-supplied <a class="el" href="balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c">Balancer_t</a> to wire up methods (prototype-copy, resembling to the one used by <a class="el" href="regler_8h.html#ad41d9bf7b5f020d488acb5d14e0bb6fa">PIDContr_t</a> in <a class="el" href="regler_8c.html" title="Regler V2.1.">regler.c</a>). </p>
 
 </div>
 </div>
@@ -835,18 +739,18 @@ Variables</h2></td></tr>
 <div class="line">        0.01f,      </div>
 <div class="line"> </div>
 <div class="line">        </div>
-<div class="line">        0.5f,       </div>
-<div class="line">        0.000f,     </div>
-<div class="line">        0.00f,      </div>
-<div class="line">        280.0f,     </div>
-<div class="line">        0.2f,       </div>
-<div class="line">        100.0f,     </div>
-<div class="line">        0.00f,      </div>
-<div class="line">        0.00f,      </div>
-<div class="line">        0.00f,      </div>
-<div class="line">        2000.0f,    </div>
-<div class="line">        1.0f,       </div>
+<div class="line">        8.0f,       </div>
+<div class="line">        0.002f,     </div>
 <div class="line">        0.05f,      </div>
+<div class="line">        150.0f,     </div>
+<div class="line">        0.2f,       </div>
+<div class="line">        10.0f,      </div>
+<div class="line">        0.50f,      </div>
+<div class="line">        0.00f,      </div>
+<div class="line">        0.00f,      </div>
+<div class="line">        1000.0f,     </div>
+<div class="line">        0.0003f,    </div>
+<div class="line">        0.15f,      </div>
 <div class="line">}</div>
 <div class="ttc" id="abalancer__t_8c_html_ad993f914e533fd5fd31c9c966dc79fd3"><div class="ttname"><a href="#ad993f914e533fd5fd31c9c966dc79fd3">TA_INNER</a></div><div class="ttdeci">#define TA_INNER</div><div class="ttdoc">0.007 s</div><div class="ttdef"><b>Definition</b> balancer_t.c:97</div></div>
 </div><!-- fragment -->
@@ -945,11 +849,19 @@ Variables</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">const int16_t rad2step = 520</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Conversion gain to translate pitch value to stepper step counts. </p>
@@ -975,7 +887,7 @@ Variables</h2></td></tr>
 <div class="line">  <a class="code hl_define" href="#a450d1fe850b6576b29e1f6fca4dacb39">StepTaskTimeSet</a>,</div>
 <div class="line">  <a class="code hl_define" href="#a450d1fe850b6576b29e1f6fca4dacb39">StepTaskTimeSet</a></div>
 <div class="line">}</div>
-<div class="ttc" id="abalancer__t_8c_html_a450d1fe850b6576b29e1f6fca4dacb39"><div class="ttname"><a href="#a450d1fe850b6576b29e1f6fca4dacb39">StepTaskTimeSet</a></div><div class="ttdeci">#define StepTaskTimeSet</div><div class="ttdoc">Inner state machine [ms] (communication to stepper takes &lt;1ms therefore total StepTaskTime = 7ms).</div><div class="ttdef"><b>Definition</b> balancer_t.c:88</div></div>
+<div class="ttc" id="abalancer__t_8c_html_a450d1fe850b6576b29e1f6fca4dacb39"><div class="ttname"><a href="#a450d1fe850b6576b29e1f6fca4dacb39">StepTaskTimeSet</a></div><div class="ttdeci">#define StepTaskTimeSet</div><div class="ttdoc">Inner state machine [ms] (communication to stepper takes &lt;1ms; chosen StepTaskTime = 7ms).</div><div class="ttdef"><b>Definition</b> balancer_t.c:88</div></div>
 </div><!-- fragment -->
 <p>StepTask cycle-time table (same order as <a class="el" href="balancer__t_8h.html#a06340bca721fa86487f6d8b7b3a8e2e9" title="Different task modes of the Balancer state machine.">TaskModus</a>). </p>
 <p>StepTask cycle time table indexed by <a class="el" href="balancer__t_8h.html#a06340bca721fa86487f6d8b7b3a8e2e9" title="Different task modes of the Balancer state machine.">TaskModus</a>. </p>

@@ -7,7 +7,7 @@
  ******************************************************************************
  *
  * @details
- * This file implements the OOP-in-C style Balancer_t module. It contains the
+ * This file implements the OOP style Balancer_t module. It contains the
  * default parameter tables, the module-level timing constants, the method
  * implementations assigned to the Balancer_t function pointers, private helper
  * functions, the const Balancer prototype instance, and the BalancerCreate()
@@ -48,7 +48,7 @@
  *
  * In M_Bala, BalancerUpdateDist() is not executed, so the pitch controller
  * behaves as the original balancing loop. When the selected mode is not
- * M_DistCtrl, BalancerUpdateDisplay() resets the distance-control state,
+ * M_DistCtrl, BalancerParamEdit()() resets the distance-control state,
  * including pitchOffset and tarVelo, to avoid reusing stale outer-loop values.
  *
  * If a fall is detected in BalancerUpdatePitch(), the distance and velocity
@@ -85,7 +85,7 @@
  * @name    Task-cycle times (compile-time constants, file-private)
  * @{
  */
-#define StepTaskTimeSet 7UL			//!< Inner state machine [ms] (communication to stepper takes <1ms therefore total StepTaskTime = 7ms)
+#define StepTaskTimeSet 7UL			//!< Inner state machine [ms] (communication to stepper takes <1ms; chosen StepTaskTime = 7ms)
 #define DistCtrlTaskTimeSet 49UL	//!< Outer (distance) loop [ms] (currently 7x inner StepTaskTime)
 #define DispTaskTimeSet 700UL		//!< Display refresh [ms]
 /** @} */
@@ -150,7 +150,7 @@ static const float defaultParam[PARAM_COUNT] = {
 		-0.004f,  	// a_phiZ pitchZero offset [rad]
 		0.98f,    	// a_GyAc complementary filter weight (98% gyro)
 		5,        	// a_HwLP hardware DLPF index (→ LPBW_10)
-		0.36f,    	// a_LP software accel low-pass weight
+		0.36f,    	// a_LP software accel low pass weight
 		0.75f,    	// a_piKP PID_phi proportional gain
 		0.058f / TA_INNER,   	// a_piKI PID_phi integral gain
 		0.27f * TA_INNER,    	// a_piKD PID_phi derivative gain
@@ -159,18 +159,18 @@ static const float defaultParam[PARAM_COUNT] = {
 		0.01f,    	// a_raTr translation ramp (reserved)
 
 		/* New params for distance control */
-		0.5f,    	// a_dKP PID_dist proportional gain
-		0.000f,   	// a_dKI PID_dist integral gain
-		0.00f,   	// a_dKD PID_dist derivative gain
-		280.0f,  	// a_dSP distance setpoint [mm]
+		8.0f,    	// a_dKP PID_dist proportional gain
+		0.002f,   	// a_dKI PID_dist integral gain
+		0.05f,   	// a_dKD PID_dist derivative gain
+		150.0f,  	// a_dSP distance setpoint [mm]
 		0.2f,      	// a_dLPF MeanVal weight for TOF low-pass
-		100.0f,		// a_distBlind: fallback distance [mm] used when TOF is invalid
-		0.00f,      // a_vKP
+		10.0f,		// a_distBlind: fallback distance [mm] used when TOF is invalid
+		0.50f,      // a_vKP
 		0.00f,      // a_vKI
 		0.00f,      // a_vKD
-		2000.0f,    // a_vMax [mm/s]
-		1.0f,       // a_a2p accel2pitch gain
-		0.05f,      // a_pClamp variable pitch clamp [rad]
+		1000.0f,     // a_vMax [mm/s]
+		0.0003f,    // a_a2p accel2pitch gain
+		0.15f,      // a_pClamp variable pitch clamp [rad]
 };
 
 static const char ParamTitle[PARAM_COUNT][5] = {
@@ -247,11 +247,10 @@ static void StepperIHold(Balancer_t *b, bool OnSwitch)
  *
  * @brief       Initialise the software state of a Balancer_t instance.
  *
- * @details     Called once by BalancerCreate() and again whenever a
- *              full re-init is required. Performs:
+ * @details     Called by BalancerCreate(). Performs:
  *              1. Copy defaultParam[] into ParamValue[].
  *              2. Initialise PID_phi, PID_dist, PID_velo.
- *              3. Clear the TOF distance low-pass filter.
+ *              3. Clear the TOF distance low pass filter.
  *              4. Reset every operating-state field (mode, flags,
  *                 timers, motor positions, route counters).
  *
@@ -425,7 +424,7 @@ static void visualisationTOF(TOFSensor_t *TOFSENS)
  *                2. Read pitch from the IMU and run fall detection
  *                   (|pitch| > PITCH_FALL_RAD -> robot fallen):
  *                   - Re-init PID_phi and clear PID_dist/PID_velo to
- *                     drop integrator wind-up accumulated during the fall.
+ *                     drop integrator wind-up during the fall.
  *                   - Reduce stepper current (relax the motors).
  *                   - return.
  *
@@ -453,7 +452,7 @@ static void BalancerUpdatePitch(Balancer_t *b) {
 		tftSetRotation(LANDSCAPE_FLIP);
 		tftFillScreen(tft_BLACK);
 		tftSetColor(tft_RED, tft_WHITE);
-		tftPrint("DHBW Bala-V2.0", 0, 0, 0);	// TODO: replace with SwVersion so the right value is always displayed
+		tftPrint("DHBW Bala-V2.0", 0, 0, 0);
 		tftSetColor(tft_GREEN, tft_BLACK);
 		dispMPUBat(b->pIMU, b->pBatADC);
 		StepperIHold(b, true);					//IHold switched on
@@ -494,7 +493,7 @@ static void BalancerUpdatePitch(Balancer_t *b) {
 	float pitch = b->pIMU->pitch;
 
 	if (fabs(pitch) > PITCH_FALL_RAD) {
-		// Robot fallen —> reset
+		// Robot fallen -> reset
 		b->activeMove = false;
 
 		// Re-init PID to clear integral windup
@@ -688,10 +687,12 @@ static void BalancerUpdateDist(Balancer_t *b)
  * @details     Two responsibilities:
  *              1. If TOF was detected (devMask DevTOF1) and a fresh
  *                 sample is ready, call @ref visualisationTOF().
- *              2. In passive / diagnostic modes (and in M_Bala/M_DistCtrl when not
+ *              2. In passive / diagnostic modes (and in M_Bala when not
  *                 actively moving) call @ref dispMPUBat(). Skipping it during active balancing
  *                 prevents the SPI display refresh (and the embedded I2C
  *                 mpuGetTemp call).
+ *                 In M_DistCtrl, BalancerUpdateDisplay() itself is only called when |pitch| < 1°
+ *                 (gated in main.c's DispTask).
  *
  * @param[in]   b   Pointer to the Balancer_t object.
  *
@@ -765,7 +766,7 @@ static void applyParams(Balancer_t *b) {
 	         b->ParamValue[a_vKD], TA_OUTER);
 	b->accel2pitchK = b->ParamValue[a_a2p];
 
-	/* Clamp hardware low-pass index to valid range 0–6 */
+	/* Clamp hardware low pass index to valid range 0–6 */
 	if (b->ParamValue[a_HwLP] < 0) b->ParamValue[a_HwLP] = 0;
 	if (b->ParamValue[a_HwLP] > 6) b->ParamValue[a_HwLP] = 6;
 	b->pIMU->LowPassFilt = tableLPFValue[(uint8_t)b->ParamValue[a_HwLP]];
@@ -849,15 +850,15 @@ static void BalancerParamEdit(Balancer_t *b) {
 
 
 /* ============================================================================
- *  PUBLIC PROTOTYPE INSTANCE — wires the static methods into the method table
+ *  PUBLIC PROTOTYPE INSTANCE - wires the static methods into the method table
  * ==========================================================================*/
 
 /**
  * @brief   Const "prototype" Balancer with method pointers.
  * @details NOT static -> visible outside this .c file. BalancerCreate()
  *          dereferences this object and copies it into the user-supplied
- *          Balancer_t to wire up methods (prototype-copy pattern,
- *          identical to the one used by PIDContr_t in regler.c).
+ *          Balancer_t to wire up methods (prototype-copy,
+ *          resembling to the one used by PIDContr_t in regler.c).
  */
 const Balancer_t Balancer = {
     .init          		= BalancerInit,
@@ -866,7 +867,6 @@ const Balancer_t Balancer = {
 	.updateDisplay 		= BalancerUpdateDisplay,
 	.DispAlphaNumMPU 	= BalancerDispAlphaNumMPU,
 	.paramEdit     		= BalancerParamEdit,
-
 };
 
 /* ============================================================================
@@ -878,7 +878,7 @@ const Balancer_t Balancer = {
  *
  * @brief       Construct a Balancer_t from a set of HW pointers.
  *
- * @details     Performs the OOP-in-C construction sequence:
+ * @details     Performs the OOP C construction sequence:
  *              copies the const Balancer prototype into *b,
  *              stores the hardware-object pointers, then calls
  *              Balancer.init(b) to configure ParamValue[] and reset

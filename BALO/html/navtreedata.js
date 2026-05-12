@@ -61,10 +61,21 @@ var NAVTREE =
         [ "TOF handling and velocity fusion", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md29", null ],
         [ "New parameters", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md30", null ],
         [ "Mode integration in <span class=\"tt\">main.c</span>", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md31", null ],
-        [ "Files (Doxygen-commented in source)", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md32", null ]
+        [ "Files (Doxygen-commented in source)", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md32", null ],
+        [ "Distance Controller Tuning", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md33", [
+          [ "Final Configuration", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md34", null ]
+        ] ],
+        [ "Tuning Procedure", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md35", [
+          [ "Stage 1 — Operating environment", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md36", null ],
+          [ "Stage 2 — Static cascade gain", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md37", null ],
+          [ "Stage 3 — Derivative damping on the distance loop", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md38", null ],
+          [ "Stage 4 — Integral correction on the distance loop", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md39", null ],
+          [ "Stage 5 — Validation", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md40", null ]
+        ] ],
+        [ "Recommendations for future work", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md41", null ]
       ] ],
-      [ "Diagrams", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md33", null ],
-      [ "Authors", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md34", null ]
+      [ "Diagrams", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md42", null ],
+      [ "Authors", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md43", null ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
@@ -95,7 +106,7 @@ var NAVTREEINDEX =
 "adc_b_a_t_8h.html#a9a85a5e6c8862eb03938052b064e4ab5a5df0e2b1fd84a14334074e5d2d1f5e75",
 "i2c_devices_8h.html",
 "i2c_t_o_f_8h.html#accbb352d5ce69b26607f425420cff471",
-"struct_s_t7735io.html#ac7cbad855c47ba9555614b2d6572f43a"
+"struct_pu_bio.html#af843da091f07f19d074da78c6669ea63"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

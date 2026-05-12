@@ -25,7 +25,7 @@ This contribution to the project is split into two coupled parts:
 1. **Refactoring.** The top-level program (old `main.c`) is reorganised into an OOP-inspired `Balancer_t` that owns all sensors, actuators, controllers and state. The new `main.c` is reduced to hardware instantiation, peripheral init, and a thin scheduler that calls the object's methods.
 2. **Cascaded distance control.** A new task mode `M_DistCtrl` is added. An outer distance loop (TOF sensor &rarr; target velocity) and a middle velocity loop (wheel-derived velocity &rarr; target acceleration &rarr; pitch offset) are wrapped around the existing inner pitch loop. The robot is meant to demonstrate the *distance control*-function on a treadmill.
 
-Function- and field-level documentation is placed directly as Doxygen comments in the source files. This page introduces the two parts and the diagrams that explain the architecture.
+Function- and field-level documentation is placed directly as Doxygen comments in the source files. This page introduces the two parts and the [diagrams](#Diagrams) that explain the architecture.
 
 
 <a id="Refac"></a>
@@ -137,7 +137,7 @@ The actual method implementations are `static` (file-private), so the only publi
 
 `Balancer_t` (defined in `balancer_t.h`) groups its fields by responsibility, exactly as visualised in the [class diagram](#Diagrams):
 
-- **HW pointers** -- `*pIMU`, `*pTOF`, `*pStepL`, `*pStepR`, `*pBatADC`. The hardware objects themselves are `static` globals in `main.c`; their addresses are *injected* via `BalancerCreate()`. This is dependency injection, not ownership.
+- **HW pointers** -- `*pIMU`, `*pTOF`, `*pStepL`, `*pStepR`, `*pBatADC`. The hardware objects themselves are `static` globals in `main.c`; their addresses are *injected* via `BalancerCreate()`.
 - **Control objects (owned by value)** -- `PID_phi` (inner pitch loop), `PID_dist` (outer distance loop), `PID_velo` (middle velocity loop), `LPF_dist` (TOF low-pass filter `MeanVal_t`).
 - **Operating state** -- pitch offset, distance setpoint, target velocity, measured velocity, motor positions, route variables, fall/active flags, current `TaskMode`, etc.
 - **Parameters** -- one flat `ParamValue[PARAM_COUNT]` array indexed by the `ParamIdx` enum (`a_piKP`, `a_dKP`, `a_dSP`, ...), kept in lock-step with `defaultParam[]`, `ParamTitle[]` and `ParamScale[]` in `balancer_t.c`.
@@ -179,7 +179,7 @@ When entering `M_DistCtrl` the robot must hold a target distance to an obstacle 
 
 ### Cascade architecture
 
-A direct distance-to-pitch PID would fight the inner balance loop. The robust solution is the classical **cascade** with three nested loops, each running at the rate that fits its dynamics:
+A direct distance-to-pitch PID could fight the inner balance loop an is more intransparent in terms of debugging and finding the control parameters. The robust solution is the classical **cascade** with three nested loops, each running at the rate that fits its dynamics:
 
 | Loop | Input | Output | Rate | Object |
 | --- | --- | --- | --- | --- |
@@ -200,12 +200,14 @@ float setPitch  = (float)rad2step * PID.run(&b->PID_phi, error_phi);
 
 This is the single integration point between the two halves of the project: `pitchOffset` is written by `updateDist()` and read by `updatePitch()`. Everything else stays decoupled.
 
+The whole control architecture is displayed in [control diagrams](#Diagrams2) for both inner and outer loops as well as a detalied [viausisation](#Diagrams2) of the `updateDist()`-routine.
+
 ### TOF handling and velocity fusion
 
 `BalancerUpdateDist()` (in `balancer_t.c`) executes the outer two loops. Two practical details are worth highlighting:
 
 1. **TOF dropouts.** When the sensor returns `TOF_VL53L0X_OUT_OF_RANGE` or a value below `a_distBlind`, the controller freezes the last filtered distance, sets `distanceVelo = 0`, and clears the velocity-PID integral. This avoids spikes from blind-spot readings driving the robot off.
-2. **Velocity measurement.** Two independent estimates exist: `distanceVelo` derived from the filtered TOF, and `translationVeloMean` derived from stepper-position differences (`STEP_TO_MM_S` conversion, mean of left and right wheel). The current implementation picks whichever has the larger magnitude as `veloMeas` -- a simple "trust whichever shows movement" heuristic. This is a candidate for a proper sensor-fusion later.
+2. **Velocity measurement.** Two independent estimates exist: `distanceVelo` derived from the filtered TOF, and `translationVeloMean` derived from stepper-position differences (`STEP_TO_MM_S` conversion, mean of left and right wheel). The current implementation picks whichever has the larger magnitude as `veloMeas`.
 
 ### New parameters
 
@@ -236,29 +238,105 @@ case M_DistCtrl:
 - `main.c` -- `M_DistCtrl` case in the `TaskMode` switch and `DistCtrlTaskTimer` registration in the SysTick timer list.
 
 
+### Distance Controller Tuning
+
+#### Final Configuration
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `a_dKP`   | 8.0   | Distance loop proportional gain |
+| `a_dKI`   | 0.002 | Distance loop integral gain |
+| `a_dKD`   | 0.05  | Distance loop derivative gain |
+| `a_dSP`   | 150 mm | Distance setpoint |
+| `a_dLPF`  | 0.2   | TOF low-pass filter weight |
+| `a_dBli`  | 10 mm | TOF blind-zone fallback distance |
+| `a_vKP`   | 0.5   | Velocity loop proportional gain |
+| `a_vKI`   | 0     | Velocity loop integral gain |
+| `a_vKD`   | 0     | Velocity loop derivative gain |
+| `a_vMax`  | 1000 mm/s | Maximum commanded velocity |
+| `a_a2p`   | 0.0003 | Acceleration-to-pitch conversion gain |
+| `a_pClp`  | 0.15 rad | Pitch clamp limit |
+
+The balancer holds distance to a static wall and tracks a moving target (e.g. a hand). The cascaded control structure is fully functional.
+
+### Tuning Procedure
+
+The cascade was tuned inside-out: each stage was made stable before the next outer stage was enabled. Gains were changed one at a time, the physical response was observed, and adjustments were made based on a small set of recognisable failure modes.
+
+#### Stage 1 — Operating environment
+
+The physical limits of the stepper actuator were characterised before any cascade tuning. Because the wheels are position-controlled, the textbook coupling between commanded chassis lean and resulting translation does not hold cleanly: lean angles below approximately 0.05 rad produce no visible translation, while lean angles above approximately 0.125 to 0.15 rad cause the chassis to fall forward. The working range for the cascade output is therefore narrow. `a_pClp` was set to 0.15 rad so the cascade has access to the upper edge of the working band while the inner-loop fall detection at 0.35 rad remains as a final safety net.
+
+#### Stage 2 — Static cascade gain
+
+The cascade output at zero measured velocity is `pitchOffset = dKP × vKP × a2p × error_dist`. This product was tuned so that the cascade reaches the upper end of the working envelope at a typical distance error of 100 mm. Several gain combinations satisfy the required product, but the ratio between `dKP` and `vKP` matters. Initial attempts with `dKP = 2, vKP = 2` and `dKP = 4, vKP = 1` produced violent oscillation between the positive and negative pitchClamp. The cause was excessive authority of the velocity feedback path: the inner balance loop's wheel corrections produce velocity swings of several hundred mm/s, which at high `vKP` are sufficient to drive `pitchOffset` between its clamps each cycle.
+
+The fix was to shift gain from `vKP` to `dKP` while preserving the product. The configuration `dKP = 8, vKP = 0.5` reduced velocity-loop authority by a factor of four and eliminated the oscillation while keeping the static cascade strength unchanged.
+
+#### Stage 3 — Derivative damping on the distance loop
+
+With proportional behaviour working, the robot accelerated toward the setpoint and tended to overshoot. The distance derivative term `a_dKD = 0.05` was introduced to provide anticipatory braking as the distance shrinks. This produced clean approach behaviour with minimal overshoot. The velocity derivative `a_vKD` was tried but proved unnecessary at the current velocity-loop gain.
+
+#### Stage 4 — Integral correction on the distance loop
+
+With proportional and derivative active, the robot reliably approached the setpoint but settled with a steady-state offset. This is the expected behaviour of a purely proportional cascade: at the setpoint `pitchOffset = 0`, but a small lean is physically required to overcome stepper detent torque and rolling friction. A small distance integral gain `a_dKI = 0.002` accumulates this offset and corrects the residual error. Larger values caused integral windup during the long approach phase and were rejected. The velocity integral `a_vKI` was deliberately kept at zero.
+
+#### Stage 5 — Validation
+
+The tuned cascade was validated in three scenarios:
+
+1. **Static wall:** the robot approaches and stops within the distance of the setpoint without sustained oscillation.
+2. **Manual disturbance:** pushing the robot away from or toward the wall produces a brief lean response, and the robot returns to the setpoint within a few seconds.
+3. **Moving target:** holding a hand at varying distances within the TOF range causes the robot to translate in the corresponding direction, demonstrating closed-loop tracking.
+
+### Recommendations for future work
+
+Two hardware-level effects significantly influenced the tuning and should be characterised before any future tuning effort.
+
+**Variation between balancer units.** During development two different balancer assemblies were used, with noticeably different behaviour. The pitch angle at which translation begins and the angle at which the chassis falls forward vary substantially between units. The 0.15 rad value used here is close to the fall threshold of the weaker-stepper unit but was insufficient to produce visible translation on the stronger-stepper unit. Future tuning should first measure these two thresholds (translation onset and fall limit) experimentally for the specific hardware in use, then size `a_pClp` and the static cascade gain to fit within the resulting working envelope.
+
+**TOF sensor mounting angle.** On the units used here, the TOF sensor is mounted at a slight downward angle. When the robot leans forward to translate, the sensor's beam can intercept the floor rather than the intended target. The measured distance then drops rapidly as a side effect of the lean itself, not as a consequence of actual translation. This couples the inner pitch loop directly into the distance measurement and creates a false-feedback path that the controller cannot distinguish from real motion. The selection of the velocity value that has a larger magnitude between the translation velocity obtaianed from the weel positions and the one from the TOF distance reading and the usage of the blind distance are approaches to cancel those negative effects. For future balancer revisions and especially for treadmill operation, it could be a possibility to mount the TOF sensor so that its optical axis is horizontal when the chassis is upright.
+
+
+
 <a id="Diagrams"></a>
 ## Diagrams
 
-The three diagrams referenced from the sections above sit alongside this page in the Doxygen output.
+This section groups the diagrams by purpose. The first diagram explains the OOP-style aggregate structure introduced by the refactoring. The next two diagrams describe the top-level program execution and the internal sequence of the new distance-control routine. The last two diagrams show the control architecture itself: the cascaded outer loops and the existing inner pitch loop.
 
-**Class diagram -- `Balancer_t` aggregate** *(Part 1)*
-Shows the root aggregate `Balancer_t` with its six sub-sections (HW pointers, control objects, operating state, parameters, SysTick timers, method-pointers). HW instances live in `main.c` and are aggregated by pointer; PIDs and the LPF are owned by value (composition). The diagram colour-codes what is new (distance-control fields and methods) versus what existed.
+Together, these figures provide a compact visual explanation of how the structural refactoring and the new control feature fit together.
 
-@image html  Balancer_OOP_structure.png  "Balancer_t -- OOP-style class diagram" width=100%
+**Class diagram -- `Balancer_t` aggregate structure**
+This diagram shows the `Balancer_t` aggregate introduced by the refactoring. It visualises which subsystems are aggregated by pointer from `main.c` and which control objects are owned directly by value inside the aggregate.
 
+The diagram puts the new additions (distance-control fields and methods) into context with the existing infrastructure. It is meant to clarify the main architectural change of the project: the previous flat top-level implementation is replaced by one central object that encapsulates state, parameters, control objects and behaviour. 
 
-**Program schedule -- `TaskMode` FSM and tick scheduling** *(Part 1 &rarr; Part 2 entry point)*
-Shows the mode transitions (`M_InitBat` &rarr; `M_CheckI2cSlaves` &rarr; `M_Bala / M_DispMpuData / M_DispTofData / M_DistCtrl`) driven by the rotary parameter `a_MODE`, and how the three SysTick timers (`StepTaskTimer` 7 ms, `DistCtrlTaskTimer` 49 ms, `DispTaskTimer` 700 ms) trigger which methods inside the main loop.
-
-@image html  PAP_TopLevel.png  "Program schedule -- TaskMode FSM and SysTick task scheduling" width=75%
+@image html  Balancer_OOP_structure.png  "Balancer_t -  OOP style class / aggregate diagram" width=75%
 
 
-**Cascaded control loops -- `M_DistCtrl`** *(Part 2)*
-Signal-flow diagram of the three nested loops. From left to right: distance setpoint `a_dSP` &rarr; outer PID &rarr; `tarVelo` (clamped by `a_vMax`) &rarr; middle PID &rarr; target acceleration &rarr; `* a_a2p` &rarr; `pitchOffset` (clamped by `a_pClamp`) &rarr; inner pitch PID &rarr; stepper command. Sensor returns: TOF + MeanVal LPF for distance, stepper-position derivative + TOF derivative for velocity (selected by max-magnitude switch).
+**Top-level scheduling and distance-control routine**
+The first diagram shows the top-level program flow of the refactored firmware. It covers static hardware-object creation, operating-parameter setup, entry into `main()`, peripheral initialisation, construction of the `Balancer` object, and the runtime `while(1)` loop containing the `TaskMode` state machine.
 
-@image html Balancer_control_loop_outer_cascade.png "Cascaded outer control loops - distance / velocity / pitch" width=100%
+The second diagram focuses on the `BalancerUpdateDist()` routine itself. It visualises the sequence used by the new distance-control implementation: TOF acquisition, validity check, low-pass filtering, outer distance control, velocity estimation, middle velocity control, and generation of the `pitchOffset` signal for the inner loop.
 
-@image html Balancer_control_loop_pitch.png "Inner pitch control loop" width=100%
+Together, these two diagrams explain not only where the new distance control is called from, but also what happens internally during one execution of the outer control path.
+
+@image html  PAP_TopLevel.png  "Top-level program schedule and task triggering" width=75%
+
+@image html  PAP_UpdateDist.png  "BalancerUpdateDist() routine flowchart (distance control)" width=75%
+
+<a id="Diagrams2"></a>
+
+**Cascaded control architecture** 
+These two control diagrams explain the regulation concept used for the new distance feature. The first figure shows the cascaded outer control structure, where distance error is converted into a target velocity, then into a target acceleration, and finally into a `pitchOffset` for the balancing loop.
+
+The second figure shows the inner pitch loop and motor-command path. It makes clear that the existing balance controller remains the innermost stabilising loop, while the new distance-control feature only acts through the `pitchOffset` coupling point. This preserves the proven balancing behaviour and keeps the new feature modular.
+
+Taken together, the two figures show how the new outer control loops are layered around the existing pitch controller without changing the basic motor actuation principle.
+
+@image html Balancer_control_loop_outer_cascade.png "Cascaded distance–velocity–pitch control structure" width=100%
+
+@image html Balancer_control_loop_pitch.png "Inner pitch loop and motor-command path" width=100%
 
 
 

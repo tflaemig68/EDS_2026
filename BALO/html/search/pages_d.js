@@ -1,7 +1,10 @@
 var searchData=
 [
-  ['ndash_20cascaded_20distance_20control_20m_5fdistctrl_0',['Part 2 &amp;ndash; Cascaded Distance Control (&lt;span class=&quot;tt&quot;&gt;M_DistCtrl&lt;/span&gt;)',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md26',1,'']]],
-  ['ndash_20oop_20refactoring_20balancer_5ft_1',['Part 1 &amp;ndash; OOP Refactoring (&lt;span class=&quot;tt&quot;&gt;balancer_t&lt;/span&gt;)',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md19',1,'']]],
-  ['ndash_20oop_20refactoring_20cascaded_20distance_20control_2',['Balancer &amp;ndash; OOP Refactoring &amp;amp; Cascaded Distance Control',['../md_docs_2_t3200__project__balancer___l_b.html',1,'']]],
-  ['new_20parameters_3',['New parameters',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md30',1,'']]]
+  ['i2c_20stepper_20modul_20arm_20balancer_0',['I2C &amp;amp; Stepper Modul [ARM Balancer]',['../md_docs_2stepper.html',1,'']]],
+  ['in_20main_20c_1',['in main c',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md31',1,'Mode integration in &lt;span class=&quot;tt&quot;&gt;main.c&lt;/span&gt;'],['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md24',1,'Scheduling in &lt;span class=&quot;tt&quot;&gt;main.c&lt;/span&gt;']]],
+  ['in_20source_2',['in source',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md25',1,'Files (Doxygen-commented in source)'],['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md32',1,'Files (Doxygen-commented in source)']]],
+  ['installation_3',['Installation',['../md_docs_2stepper.html#autotoc_md13',1,'']]],
+  ['integral_20correction_20on_20the_20distance_20loop_4',['Stage 4 — Integral correction on the distance loop',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md39',1,'']]],
+  ['integration_20in_20main_20c_5',['Mode integration in &lt;span class=&quot;tt&quot;&gt;main.c&lt;/span&gt;',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md31',1,'']]],
+  ['introduction_6',['Introduction',['../md_docs_2regler.html#autotoc_md2',1,'Introduction'],['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md18',1,'Introduction']]]
 ];

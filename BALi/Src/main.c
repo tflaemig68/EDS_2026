@@ -12,8 +12,6 @@
  *              ticks.
  * @date        May 2026
  ******************************************************************************
-
- ******************************************************************************
  * @attention This software is licensed based on CC BY-NC-SA 4.0
  ******************************************************************************
  */
@@ -94,7 +92,7 @@ static int  CheckAndInitI2cSlaves(uint8_t *DevMask,
  *              (lines 284..414). Called once per StepTask tick (50 ms)
  *              while bala.TaskMode == M_CheckI2cSlaves. Drives an internal
  *              static state variable "CycleRun" that walks through the
- *              following stages — see also the call sequence below:
+ *              following stages - see also the call sequence below:
  *
  *				Call 1  CycleRun==-4 : StepL find+init, CycleRun++ -3, return
  *				Call 2  CycleRun==-3 : StepR init (falls thru) + TOF detect
@@ -115,7 +113,7 @@ static int  CheckAndInitI2cSlaves(uint8_t *DevMask,
  * @param[in,out] pMPU1    Pointer to MPU6050 object.
  * @param[in,out] pTOF1    Pointer to TOF sensor object.
  *
- * @returns     int — current value of the internal CycleRun counter.
+ * @returns     int - current value of the internal CycleRun counter.
  *              The main loop watches for "0", which means "all required
  *              init steps complete". The DevMask tells the main loop
  *              which devices were actually found.
@@ -146,7 +144,7 @@ static int CheckAndInitI2cSlaves(uint8_t *DevMask,
         return (CycleRun);
     }
 
-    /* CycleRun == -4: LEFT stepper — detect, init, return */
+    /* CycleRun == -4: LEFT stepper - detect, init, return */
     if (((*DevMask & DevStepL) == 0) && (CycleRun == -4))
     {
         i2c_Addr = i2cAddr_motL;
@@ -196,7 +194,7 @@ static int CheckAndInitI2cSlaves(uint8_t *DevMask,
             pStepR->i2cAddress.value = 0;
         }
     }
-    /* no return — falls through to TOF + MPU */
+    /* no return - falls through to TOF + MPU */
 
     /* TOF: set I2C address (CycleRun == -3) */
     if (((*DevMask & DevTOF1) == 0) && (CycleRun == -3))
@@ -480,7 +478,6 @@ int main(void)
                                     bala.pIMU->pitchFilt);
                             tftPrintColor(d, 0, 30, tft_CYAN);
 
-                            /* timebase must be 0.0008, swLP must be 0.36 */
                             sprintf(d, "tb:%.4f LP:%.2f",
                                     bala.pIMU->timebase,
                                     bala.pIMU->swLowPassFilt);

@@ -11,7 +11,7 @@
  *               prototype instance, and the BalancerCreate() constructor.
  *
  * @par Architecture
- * - Balancer_t is an aggregate following the OOP-in-C pattern:
+ * - Balancer_t is an aggregate following the OOP style C:
  *   encapsulation, composition, and prototype-copy construction with
  *   function-pointer based method.
  * - Hardware objects (MPU6050_t, TOFSensor_t, Stepper_t, analogCh_t)
@@ -49,7 +49,7 @@
 #include <regler.h>     // PIDContr_t, MeanVal_t (control + filter)
 
 /* ============================================================================
- *  Device mask — which I2C slaves were found during the boot scan
+ *  Device mask - which I2C slaves were found during the boot scan
  * ==========================================================================*/
 
 /**
@@ -143,7 +143,7 @@ typedef enum {
     a_dKI,          //!< PID_dist integral gain
     a_dKD,          //!< PID_dist derivative gain
     a_dSP,          //!< Distance setpoint [mm]
-    a_dLPF,         //!< MeanVal weight for TOF low-pass filter
+    a_dLPF,         //!< MeanVal weight for TOF low pass filter
     a_distBlind,    //!< TOF blind-zone threshold [mm]; smaller readings are rejected
     a_vKP,          //!< PID_velo proportional gain
     a_vKI,          //!< PID_velo integral gain
@@ -170,7 +170,7 @@ typedef struct Balancer Balancer_t;
  *          - the editable parameters,
  *          - the public method table (function pointers).
  *
- *          Method dispatch follows the prototype-copy pattern: a const
+ *          Method dispatch follows the prototype-copy approach: a const
  *          instance "Balancer" in balancer_t.c holds the function pointers,
  *          BalancerCreate() copies it into the user-supplied Balancer_t,
  *          then overwrites the HW pointers and calls init().
@@ -183,7 +183,7 @@ struct Balancer {
      *  Created as globals in main.c; only their addresses are stored
      *  here so that main.c remains the single owner of HW.
      */
-    MPU6050_t *pIMU;      	//!< IMU (MPU6050) — pitch/accel/gyro
+    MPU6050_t *pIMU;      	//!< IMU (MPU6050) - pitch/accel/gyro
     TOFSensor_t *pTOF;      //!< Time-of-Flight sensor (VL53L0X)
     Stepper_t *pStepL;    	//!< Left  stepper (AMIS-30543)
     Stepper_t *pStepR;    	//!< Right stepper (AMIS-30543)
@@ -193,7 +193,7 @@ struct Balancer {
     PIDContr_t PID_phi;    	//!< Inner loop: pitch -> stepper position
     PIDContr_t PID_dist;  	//!< Outer loop: distance -> target velocity
     PIDContr_t PID_velo;   	//!< Middle loop: velocity -> target accel
-    MeanVal_t LPF_dist;   	//!< Low-pass filter on TOF distance
+    MeanVal_t LPF_dist;   	//!< Lowpass filter on TOF distance
 
 	/* ---------- Operating variables/stated/modes ---------- */
 	float pitchOffset;		//!< Output of velocity loop [rad]; subtracted from measured pitch to form error_phi (i.e. acts as the pitch setpoint)
@@ -259,7 +259,7 @@ extern const Balancer_t Balancer;
 /**
  * @brief       Constructor for the Balancer_t aggregate object.
  *
- * @details     Performs the OOP-in-C "construct" sequence:
+ * @details     Performs the OOP C "construct" sequence:
  *              1. Copies the const Balancer prototype into *b
  *                 (this wires up the method-pointer table).
  *              2. Stores the supplied HW pointers into the aggregate.
