@@ -55,5 +55,25 @@
 			<type>2</type>
 			<locationURI>WORKSPACE_LOC/MCAL/Src</locationURI>
 		</link>
+		<link>
+			<name>Inc/BALO/Src</name>
+			<type>2</type>
+			<location>C:/Users/luis-/DHBW/T3200/new_workspace/EDS_2026_T3200_LB/BALO/Src</location>
+		</link>
+		<link>
+			<name>Inc/MCAL/Src</name>
+			<type>2</type>
+			<location>C:/Users/luis-/DHBW/T3200/new_workspace/EDS_2026_T3200_LB/MCAL/Src</location>
+		</link>
+		<link>
+			<name>Src/BALO/Src</name>
+			<type>2</type>
+			<location>C:/Users/luis-/DHBW/Balancer_workspace_T3200/EDS_2026_T3200_LB/BALO/Src</location>
+		</link>
+		<link>
+			<name>Src/MCAL/Src</name>
+			<type>2</type>
+			<location>C:/Users/luis-/DHBW/Balancer_workspace_T3200/EDS_2026_T3200_LB/MCAL/Src</location>
+		</link>
 	</linkedResources>
 </projectDescription>

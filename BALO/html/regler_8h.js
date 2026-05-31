@@ -6,6 +6,7 @@ var regler_8h =
     [ "PIDContr_t", "regler_8h.html#ad41d9bf7b5f020d488acb5d14e0bb6fa", null ],
     [ "LowPassFilt", "regler_8h.html#a77e6c640ffadfed47a54e151d0e2c3ee", null ],
     [ "MeanVALclr", "regler_8h.html#a7d3eeaef47dac42ffa6ae4ed285bccff", null ],
+    [ "MeanVALrun", "regler_8h.html#a674ef70eb4eb61b0acd9a8fa2b6fb795", null ],
     [ "MeanValrun", "regler_8h.html#af17ef1e0ca689debf74e72c2bf5cae72", null ],
     [ "PIDclear", "regler_8h.html#a290bf431474ea3a64c0356d070596995", null ],
     [ "PIDget", "regler_8h.html#aa82dc322a66c93bc226a8121d7c23831", null ],

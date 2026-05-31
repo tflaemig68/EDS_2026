@@ -37,5 +37,6 @@ var i2c_t_o_f_8c =
     [ "TOF_stop_continuous", "i2c_t_o_f_8c.html#ac1e075420cb54ac1c7009de172668e4e", null ],
     [ "TOF_address_used", "i2c_t_o_f_8c.html#a6863b2a5f516d65dca1e6b5d6acd5e72", null ],
     [ "TOF_continuous_mode", "i2c_t_o_f_8c.html#a154d284cba245466f3a104721cbe73fb", null ],
-    [ "TOF_i2c", "i2c_t_o_f_8c.html#ac56fd26d38f8d3b9909325baa42efa9a", null ]
+    [ "TOF_i2c", "i2c_t_o_f_8c.html#ac56fd26d38f8d3b9909325baa42efa9a", null ],
+    [ "TOF_stop_variable", "i2c_t_o_f_8c.html#a765c0f264ad9cdb19f91cc5b07bbd56f", null ]
 ];

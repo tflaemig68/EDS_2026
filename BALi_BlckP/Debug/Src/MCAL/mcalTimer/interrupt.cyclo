@@ -1,4 +1,0 @@
-interrupt.c:39:21:timerClearIrqFlag	1
-interrupt.c:73:21:timerEnableInterrupt	10
-interrupt.c:155:21:timerDisableInterrupt	10
-interrupt.c:232:21:timerClearInterruptFlag	14

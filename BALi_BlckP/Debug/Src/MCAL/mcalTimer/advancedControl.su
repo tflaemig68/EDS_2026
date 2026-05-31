@@ -1,5 +1,0 @@
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/advancedControl.c:39:21:timerSetRepetitionCounter	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/advancedControl.c:73:22:timerSetBreakAndDeadTime	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/advancedControl.c:105:21:timerBdtrClearRegister	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/advancedControl.c:138:21:timerBdtrEnableMainOutput	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/advancedControl.c:180:21:timerBdtrEnableBreakInput	16	static

@@ -261,7 +261,7 @@ int16_t mpuGetAccel(MPU6050_t* sensor) {
 	int16_t *XYZ;
 	float *XYZFiltert;
 
-	if (sensor->accel_range != (uint8_t) DISABLE)
+	if (sensor->accel_range != (uint8_t) MPU_DISABLE )
 	{
 		i2cBurstRegRead(sensor->i2c, sensor->i2c_address, MPU6050_AccXYZ,readBuffer, 6);
 		sensor->accel_raw[0] = (readBuffer[0]<<8) + readBuffer[1];
@@ -372,7 +372,7 @@ int16_t mpuGetRPfromAccel(MPU6050_t* sensor) {
  */
 int16_t mpuGetGyro(MPU6050_t* sensor)
 {
-	if (sensor->gyro_scale != (uint8_t) DISABLE) {
+	if (sensor->gyro_scale != (uint8_t) MPU_DISABLE ) {
 		uint8_t readBuffer[6];
 
 		I2C_RETURN_CODE_t i2c_return;
@@ -397,7 +397,7 @@ int16_t mpuGetPitch(MPU6050_t* sensor)
 	int16_t *XYZ;
 	float *XYZFiltert;
 	uint8_t readBuffer[14];
-	if (sensor->accel_range != (uint8_t) DISABLE)
+	if (sensor->accel_range != (uint8_t) MPU_DISABLE )
 	{
 		i2cBurstRegRead(sensor->i2c, sensor->i2c_address, MPU6050_AccXYZ,readBuffer, 14);
 		sensor->accel_raw[0] = (readBuffer[0]<<8) + readBuffer[1];

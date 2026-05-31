@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['table_20of_20contents_0',['Table of Contents',['../md_docs_2regler.html#autotoc_md1',1,'Table of Contents'],['../md_docs_2stepper.html#autotoc_md12',1,'Table of Contents']]],
-  ['taster_1',['Abgabe Project ARM-Controller Gruppe: Dreh-Druck-Taster',['../md_docs_2_rotary__push__button.html',1,'']]]
+  ['i2c_20stepper_20modul_20arm_20balancer_0',['I2C &amp;amp; Stepper Modul [ARM Balancer]',['../md_docs_2stepper.html',1,'']]],
+  ['in_20main_20c_1',['in main c',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md31',1,'Mode integration in &lt;span class=&quot;tt&quot;&gt;main.c&lt;/span&gt;'],['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md24',1,'Scheduling in &lt;span class=&quot;tt&quot;&gt;main.c&lt;/span&gt;']]],
+  ['in_20source_2',['in source',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md25',1,'Files (Doxygen-commented in source)'],['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md32',1,'Files (Doxygen-commented in source)']]],
+  ['installation_3',['Installation',['../md_docs_2stepper.html#autotoc_md13',1,'']]],
+  ['integral_20correction_20on_20the_20distance_20loop_4',['Stage 4 — Integral correction on the distance loop',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md39',1,'']]],
+  ['integration_20in_20main_20c_5',['Mode integration in &lt;span class=&quot;tt&quot;&gt;main.c&lt;/span&gt;',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md31',1,'']]],
+  ['introduction_6',['Introduction',['../md_docs_2regler.html#autotoc_md2',1,'Introduction'],['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md18',1,'Introduction']]]
 ];

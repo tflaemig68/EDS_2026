@@ -1,5 +1,6 @@
 # Eclipse / STM32CubeIDE
 .metadata/
+.settings/
 
 # Build folders
 **/Debug/

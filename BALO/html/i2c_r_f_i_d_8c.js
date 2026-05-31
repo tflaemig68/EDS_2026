@@ -1,7 +1,5 @@
 var i2c_r_f_i_d_8c =
 [
-    [ "convDecByteToHex", "i2c_r_f_i_d_8c.html#a9b1d469d4f5a631f6ffc401afa1d7b01", null ],
-    [ "low_pass", "i2c_r_f_i_d_8c.html#a6f63da1ee0beb17c9c0e5fd226f177d6", null ],
     [ "RFID_LED", "i2c_r_f_i_d_8c.html#a11e6c293f4784b30677680532895a26a", null ],
     [ "RFID_readCard", "i2c_r_f_i_d_8c.html#a63eed2668e4e14d9d736a142dc42ef75", null ],
     [ "RFID_readFWVersion", "i2c_r_f_i_d_8c.html#a92e723a40d4fb9d6c8b19c0fcbc833a7", null ],

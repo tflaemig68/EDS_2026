@@ -1,4 +1,0 @@
-deprecated.c:17:6:timerBusClkOn	1
-deprecated.c:29:6:timerBusClkOff	1
-deprecated.c:44:21:timerSetPreloadValue	1
-deprecated.c:60:22:timerGetPreloadValue	1

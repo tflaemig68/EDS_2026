@@ -108,7 +108,7 @@ typedef enum
 #define MPU6050_I2C_SLV2_DO             0x65
 #define MPU6050_I2C_SLV3_DO             0x66
 
-#define DISABLE                         0xFF
+#define MPU_DISABLE                     0xFF
 #define RESTART							0x01
 #define NO_RESTART						0x00
 

@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['dreh_20druck_20taster_0',['Abgabe Project ARM-Controller Gruppe: Dreh-Druck-Taster',['../md_docs_2_rotary__push__button.html',1,'']]],
-  ['drehgeber_1',['Drehgeber',['../md_docs_2_rotary__push__button.html#autotoc_md7',1,'']]],
-  ['druck_20taster_2',['Abgabe Project ARM-Controller Gruppe: Dreh-Druck-Taster',['../md_docs_2_rotary__push__button.html',1,'']]]
+  ['4_20—_20integral_20correction_20on_20the_20distance_20loop_0',['Stage 4 — Integral correction on the distance loop',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md39',1,'']]]
 ];

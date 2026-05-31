@@ -1,8 +1,0 @@
-masterSlave.c:34:22:timerSelectMasterSlaveTriggerAction	4
-masterSlave.c:84:22:timerSelectMasterSlaveMode	10
-masterSlave.c:160:22:timerSelectMasterSlaveTriggerSyncInput	10
-masterSlave.c:232:22:timerSetMasterSlaveExternalTriggerPolarity	8
-masterSlave.c:279:22:timerEnableMasterSlaveExternalTriggerClock	6
-masterSlave.c:313:22:timerDisableMasterSlaveExternalTriggerClock	6
-masterSlave.c:348:22:timerSelectMasterSlaveExternalTriggerPrescaler	10
-masterSlave.c:402:22:timerSelectMasterSlaveExternalTriggerFilter	22

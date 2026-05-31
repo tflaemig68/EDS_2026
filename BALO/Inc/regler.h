@@ -48,6 +48,7 @@ struct MeanVal
 };
 
 extern float MeanValrun(MeanVal_t* mVal, float Inp);
+extern float MeanVALrun(MeanVal_t* mVal, float Inp);
 
 extern void MeanVALclr(MeanVal_t* mVal, float wight);
 

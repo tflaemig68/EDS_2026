@@ -27,5 +27,6 @@ var searchData=
   ['mpu6050_5fpwr_5fmgmt_5f1_24',['MPU6050_PWR_MGMT_1',['../i2c_m_p_u_8h.html#a1308d38ea177e0f08f6f4bc7280b42b8',1,'i2cMPU.h']]],
   ['mpu6050_5fpwr_5fmgmt_5f2_25',['MPU6050_PWR_MGMT_2',['../i2c_m_p_u_8h.html#a56c229bfee1c52bde4a3b3f3efcb5678',1,'i2cMPU.h']]],
   ['mpu6050_5fswreset_26',['MPU6050_SWRESET',['../i2c_m_p_u_8h.html#a43abf706abd85ef5559942aa2a61bc2f',1,'i2cMPU.h']]],
-  ['mpu6050_5ftemp_27',['MPU6050_Temp',['../i2c_m_p_u_8h.html#a5ed1e58e2503e0abc6a80d609bcd8a7d',1,'i2cMPU.h']]]
+  ['mpu6050_5ftemp_27',['MPU6050_Temp',['../i2c_m_p_u_8h.html#a5ed1e58e2503e0abc6a80d609bcd8a7d',1,'i2cMPU.h']]],
+  ['mpu_5fdisable_28',['MPU_DISABLE',['../i2c_m_p_u_8h.html#aae83a2882485774cb81e8a381708f165',1,'i2cMPU.h']]]
 ];

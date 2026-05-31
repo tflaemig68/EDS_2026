@@ -1,4 +1,13 @@
 var searchData=
 [
-  ['y_5fsize_0',['y_size',['../struct__font.html#aca8063296e2dfd4a6e5f523447771f1d',1,'_font']]]
+  ['value_0',['value',['../structuint8_parameter__t.html#aabaff4958632ebff0bfcf8c460ec6894',1,'uint8Parameter_t::value'],['../structuint16_parameter__t.html#a3f5d5302de793be93f21fd4bff0f1569',1,'uint16Parameter_t::value'],['../structint16_parameter__t.html#a5945ca2f77f5ae10dcf1ed25b3d8a5b1',1,'int16Parameter_t::value'],['../structuint32_parameter__t.html#a26bc655349c025082b30b59cfaeaf6af',1,'uint32Parameter_t::value']]],
+  ['velol_1',['veloL',['../struct_balancer.html#ad028c35c429180cec60c35361c8bdf05',1,'Balancer']]],
+  ['velomeas_2',['veloMeas',['../struct_balancer.html#a179beb5f28c74d8284aecae4d17b0a19',1,'Balancer']]],
+  ['velor_3',['veloR',['../struct_balancer.html#af3afd1e6c88bcc9929fe072e921accbf',1,'Balancer']]],
+  ['vmax_4',['vMax',['../struct_stepper.html#a2b44f9657c5af257b1212a71074b658e',1,'Stepper']]],
+  ['vmaxdescription_5',['vMaxDescription',['../i2c_a_m_i_s_8c.html#ab7bc42d4171a4026b1731bc619272e4b',1,'i2cAMIS.c']]],
+  ['vmaxname_6',['vMaxName',['../i2c_a_m_i_s_8c.html#af4c31dbd74adfeee439ae0858dde3a32',1,'i2cAMIS.c']]],
+  ['vmin_7',['vMin',['../struct_stepper.html#af9b7eb558457707f988fe8e791675987',1,'Stepper']]],
+  ['vmindescription_8',['vMinDescription',['../i2c_a_m_i_s_8c.html#a0bd1f3e8798d66b32763993b82c5d29e',1,'i2cAMIS.c']]],
+  ['vminname_9',['vMinName',['../i2c_a_m_i_s_8c.html#aca9c9fe53d1062d38973e9372ba307bc',1,'i2cAMIS.c']]]
 ];

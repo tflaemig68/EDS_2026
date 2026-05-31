@@ -1,9 +1,21 @@
 var searchData=
 [
-  ['i2c_5factivate_5fpb89_0',['i2c_activate_pb89',['../i2c_r_f_i_d_8h.html#ae5390f0d2c32058ce05d1f0a5cfb9002',1,'i2cRFID.h']]],
-  ['i2c_5fscan_1',['I2C_SCAN',['../adc_b_a_t_8h.html#a79f35f2a338b329628da80cb01938c79',1,'I2C_SCAN(I2C_TypeDef *i2c, uint8_t scanAddr):&#160;adcBAT.c'],['../adc_b_a_t_8c.html#a79f35f2a338b329628da80cb01938c79',1,'I2C_SCAN(I2C_TypeDef *i2c, uint8_t scanAddr):&#160;adcBAT.c']]],
-  ['initled_2',['initLED',['../_rotary_push_button_8h.html#ad8e604dfc3d1aebb48a5d2e2ce12fc86',1,'initLED(const LEDio_t *_pLED):&#160;RotaryPushButton.c'],['../_rotary_push_button_8c.html#af8c333cd4a6c4a1f0d84341dcd7670e9',1,'initLED(const LEDio_t *pLEDset):&#160;RotaryPushButton.c']]],
-  ['initrotarypushbutton_3',['initRotaryPushButton',['../_rotary_push_button_8h.html#afc12f169b97fca27c4b8e3bc1852ace4',1,'initRotaryPushButton(const PuBio_t *pPuBioset):&#160;RotaryPushButton.c'],['../_rotary_push_button_8c.html#afc12f169b97fca27c4b8e3bc1852ace4',1,'initRotaryPushButton(const PuBio_t *pPuBioset):&#160;RotaryPushButton.c']]],
-  ['inittofsensordata_4',['initTOFSensorData',['../i2c_t_o_f_8h.html#af7852098c44af57a7af60ba69b3c31b5',1,'initTOFSensorData(TOFSensor_t *sensor, I2C_TypeDef *i2c_tof, uint16_t TOF_address_used, uint16_t Ranging_Profiles_t, uint16_t measuredRange):&#160;i2cTOF.c'],['../i2c_t_o_f_8c.html#af7852098c44af57a7af60ba69b3c31b5',1,'initTOFSensorData(TOFSensor_t *sensor, I2C_TypeDef *i2c_tof, uint16_t TOF_address_used, uint16_t Ranging_Profiles_t, uint16_t measuredRange):&#160;i2cTOF.c']]],
-  ['iospiinit_5',['IOspiInit',['../_s_t7735_8h.html#ab614241bc418e469c69e2c480423a84a',1,'IOspiInit(ST7735io_t *TFT1):&#160;ST7735.c'],['../_s_t7735_8c.html#a2fb2c767f8c2a7d251ff48b104e5921b',1,'IOspiInit(ST7735io_t *TFTset):&#160;ST7735.c']]]
+  ['getaccel_0',['getAccel',['../i2c_a_m_i_s_8c.html#a1329c6e31712e7e1fb4eebc9f680930b',1,'i2cAMIS.c']]],
+  ['getbatvolt_1',['getBatVolt',['../adc_b_a_t_8h.html#a60741550a99d7425829c36a9317e0664',1,'getBatVolt(analogCh_t *pADChn):&#160;adcBAT.c'],['../adc_b_a_t_8c.html#a60741550a99d7425829c36a9317e0664',1,'getBatVolt(analogCh_t *pADChn):&#160;adcBAT.c']]],
+  ['getfullstatus1_2',['getFullStatus1',['../i2c_a_m_i_s_8c.html#a734649ad7f7db20e7ba38bf0fb7c7e5f',1,'i2cAMIS.c']]],
+  ['getfullstatus2_3',['getFullStatus2',['../i2c_a_m_i_s_8c.html#a4563884d4288a5a03d5927affcd00705',1,'i2cAMIS.c']]],
+  ['geti2caddress_4',['getI2CAddress',['../i2c_a_m_i_s_8c.html#a28c2a683a8e5bfd62cc13b1a6d493161',1,'i2cAMIS.c']]],
+  ['geti2cbus_5',['getI2CBus',['../i2c_a_m_i_s_8c.html#a9e6395ff0ba01b0f8b4cf639b55c59de',1,'i2cAMIS.c']]],
+  ['getihold_6',['getIHold',['../i2c_a_m_i_s_8c.html#ad2bd3d9f62293286f7276494a0385a8a',1,'i2cAMIS.c']]],
+  ['getirun_7',['getIRun',['../i2c_a_m_i_s_8c.html#a0316a1d6d385a7eeb3ee6b47cd5b3bbe',1,'i2cAMIS.c']]],
+  ['getpwmjitter_8',['getPWMJitter',['../i2c_a_m_i_s_8c.html#ae00fc7df2a21212a61f3950c817f8608',1,'i2cAMIS.c']]],
+  ['getrelativemotionthreshold_9',['getRelativeMotionThreshold',['../i2c_a_m_i_s_8c.html#aa830c0b701b3bf166d07b449257527a0',1,'i2cAMIS.c']]],
+  ['getrotaryposition_10',['getRotaryPosition',['../_rotary_push_button_8h.html#a76034e5ab3fd0371aec4a3ff0c47fa9c',1,'getRotaryPosition(void):&#160;RotaryPushButton.c'],['../_rotary_push_button_8c.html#a86f4b7b7939a8c7b32cf45e8c70cf0b2',1,'getRotaryPosition():&#160;RotaryPushButton.c']]],
+  ['getrotarypushbutton_11',['getRotaryPushButton',['../_rotary_push_button_8h.html#a6aebe12370ad0af823ed5c0feefd8b26',1,'getRotaryPushButton(void):&#160;RotaryPushButton.c'],['../_rotary_push_button_8c.html#ad47da02fd9e793a2c462f2d2f6bfa387',1,'getRotaryPushButton():&#160;RotaryPushButton.c']]],
+  ['getrotdir_12',['getRotDir',['../i2c_a_m_i_s_8c.html#a08d1f48644cbbf389ed3e6b08137ef60',1,'i2cAMIS.c']]],
+  ['getsecpos_13',['getSecPos',['../i2c_a_m_i_s_8c.html#a83033f791732ec710c83bc23b3e48fac',1,'i2cAMIS.c']]],
+  ['getstepmode_14',['getStepMode',['../i2c_a_m_i_s_8c.html#a87f86b5f7b27474d0ff7db2837c217e6',1,'i2cAMIS.c']]],
+  ['getstepper_15',['getStepper',['../i2c_a_m_i_s_8c.html#a276397d2c6c69d52df7f8998bc3e76ee',1,'i2cAMIS.c']]],
+  ['getvmax_16',['getVMax',['../i2c_a_m_i_s_8c.html#aa403e5f878088470cf77ffa6f5c94443',1,'i2cAMIS.c']]],
+  ['getvmin_17',['getVMin',['../i2c_a_m_i_s_8c.html#ab6a9b4f97de779660dcc03f8fe7cd8e7',1,'i2cAMIS.c']]]
 ];

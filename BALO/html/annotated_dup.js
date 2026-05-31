@@ -2,6 +2,7 @@ var annotated_dup =
 [
     [ "_font", "struct__font.html", "struct__font" ],
     [ "analogCh_t", "structanalog_ch__t.html", "structanalog_ch__t" ],
+    [ "Balancer", "struct_balancer.html", "struct_balancer" ],
     [ "i2cParameter_t", "structi2c_parameter__t.html", "structi2c_parameter__t" ],
     [ "int16Parameter_t", "structint16_parameter__t.html", "structint16_parameter__t" ],
     [ "LEDio", "struct_l_e_dio.html", "struct_l_e_dio" ],

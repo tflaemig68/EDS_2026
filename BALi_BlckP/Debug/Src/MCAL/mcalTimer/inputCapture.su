@@ -1,7 +1,0 @@
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/inputCapture.c:36:21:timerSetInputCapturePrescaler	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/inputCapture.c:155:21:timerGetInputCapturePrescaler	24	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/inputCapture.c:212:21:timerSetInputCaptureMode	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/inputCapture.c:365:21:timerSetInputCaptureSamplingClkRatio	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/inputCapture.c:431:21:timerGetInputCaptureSamplingClkRatio	24	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/inputCapture.c:483:21:timerSelectInputCaptureTriggerInput	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/inputCapture.c:528:21:timerSetInputCaptureFilter	16	static

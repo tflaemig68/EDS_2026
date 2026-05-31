@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['name_0',['name',['../structuint8_parameter__t.html#ae40c01e77a2e02ebfb2274298cf42756',1,'uint8Parameter_t::name'],['../structuint16_parameter__t.html#a3da95030f4c13ef57be23cda7696b5ac',1,'uint16Parameter_t::name'],['../structint16_parameter__t.html#aa3b2bb54a86e07830ba9e0e94ca73459',1,'int16Parameter_t::name'],['../structuint32_parameter__t.html#af55c29a57bd65fed5bc79057465aa38a',1,'uint32Parameter_t::name'],['../structi2c_parameter__t.html#a1bbb7afd54a40d9dc7c8cdf374928e12',1,'i2cParameter_t::name']]],
-  ['no_5frestart_1',['NO_RESTART',['../i2c_m_p_u_8h.html#a0a55fac1d0cc1aedfb75ae9d9cad0297',1,'i2cMPU.h']]],
-  ['numchars_2',['numchars',['../struct__font.html#a72d7e04d3bedab89edf9b8630d1f71d4',1,'_font']]]
+  ['halfbat_0',['halfBat',['../adc_b_a_t_8h.html#a9a85a5e6c8862eb03938052b064e4ab5a5df0e2b1fd84a14334074e5d2d1f5e75',1,'adcBAT.h']]],
+  ['halfbatvolt_1',['halfBatVolt',['../adc_b_a_t_8h.html#a91d56e13cb594f8d1bf03b4dab790136',1,'adcBAT.h']]],
+  ['handling_20and_20velocity_20fusion_2',['TOF handling and velocity fusion',['../md_docs_2_t3200__project__balancer___l_b.html#autotoc_md29',1,'']]],
+  ['height_3',['height',['../_s_t7735_8c.html#a81c9f8d0b8c3b49d770be14dbe9f0d37',1,'ST7735.c']]]
 ];

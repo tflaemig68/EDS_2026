@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['font_0',['Font',['../_s_t7735_8c.html#a9470757e038d206fb456aa4ea3c730b0',1,'ST7735.c']]]
+  ['balancer_5ft_0',['Balancer_t',['../balancer__t_8h.html#a2311487c7f51c28e6371c709def8341c',1,'balancer_t.h']]]
 ];

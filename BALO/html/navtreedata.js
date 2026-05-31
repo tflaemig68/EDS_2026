@@ -44,6 +44,39 @@ var NAVTREE =
       [ "Examples", "md_docs_2stepper.html#autotoc_md14", null ],
       [ "Authors", "md_docs_2stepper.html#autotoc_md15", null ]
     ] ],
+    [ "Balancer &ndash; OOP Refactoring &amp; Cascaded Distance Control", "md_docs_2_t3200__project__balancer___l_b.html", [
+      [ "Table of Contents", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md17", null ],
+      [ "Introduction", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md18", null ],
+      [ "Part 1 &ndash; OOP Refactoring (<span class=\"tt\">balancer_t</span>)", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md19", [
+        [ "Goal of the refactoring", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md20", null ],
+        [ "The C-with-structs OOP pattern", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md21", null ],
+        [ "What <span class=\"tt\">Balancer_t</span> aggregates", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md22", null ],
+        [ "Constructor and lifecycle", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md23", null ],
+        [ "Scheduling in <span class=\"tt\">main.c</span>", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md24", null ],
+        [ "Files (Doxygen-commented in source)", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md25", null ]
+      ] ],
+      [ "Part 2 &ndash; Cascaded Distance Control (<span class=\"tt\">M_DistCtrl</span>)", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md26", [
+        [ "Goal", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md27", null ],
+        [ "Cascade architecture", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md28", null ],
+        [ "TOF handling and velocity fusion", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md29", null ],
+        [ "New parameters", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md30", null ],
+        [ "Mode integration in <span class=\"tt\">main.c</span>", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md31", null ],
+        [ "Files (Doxygen-commented in source)", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md32", null ],
+        [ "Distance Controller Tuning", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md33", [
+          [ "Final Configuration", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md34", null ]
+        ] ],
+        [ "Tuning Procedure", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md35", [
+          [ "Stage 1 — Operating environment", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md36", null ],
+          [ "Stage 2 — Static cascade gain", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md37", null ],
+          [ "Stage 3 — Derivative damping on the distance loop", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md38", null ],
+          [ "Stage 4 — Integral correction on the distance loop", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md39", null ],
+          [ "Stage 5 — Validation", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md40", null ]
+        ] ],
+        [ "Recommendations for future work", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md41", null ]
+      ] ],
+      [ "Diagrams", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md42", null ],
+      [ "Authors", "md_docs_2_t3200__project__balancer___l_b.html#autotoc_md43", null ]
+    ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -61,7 +94,7 @@ var NAVTREE =
         [ "Typedefs", "globals_type.html", null ],
         [ "Enumerations", "globals_enum.html", null ],
         [ "Enumerator", "globals_eval.html", null ],
-        [ "Macros", "globals_defs.html", null ]
+        [ "Macros", "globals_defs.html", "globals_defs" ]
       ] ]
     ] ]
   ] ]
@@ -70,9 +103,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_rotary_push_button_8c.html",
-"globals_a.html",
-"i2c_t_o_f_8c.html#a702016e82d78b4037bf6fd1983d9f31d",
-"struct_m_p_u6050.html#a3f6f96d7d09f001ea3e233059b21fa9e"
+"adc_b_a_t_8h.html#a9a85a5e6c8862eb03938052b064e4ab5a5df0e2b1fd84a14334074e5d2d1f5e75",
+"i2c_devices_8h.html",
+"i2c_t_o_f_8h.html#accbb352d5ce69b26607f425420cff471",
+"struct_pu_bio.html#af843da091f07f19d074da78c6669ea63"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

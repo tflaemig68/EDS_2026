@@ -1,8 +1,0 @@
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/masterSlave.c:34:22:timerSelectMasterSlaveTriggerAction	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/masterSlave.c:84:22:timerSelectMasterSlaveMode	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/masterSlave.c:160:22:timerSelectMasterSlaveTriggerSyncInput	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/masterSlave.c:232:22:timerSetMasterSlaveExternalTriggerPolarity	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/masterSlave.c:279:22:timerEnableMasterSlaveExternalTriggerClock	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/masterSlave.c:313:22:timerDisableMasterSlaveExternalTriggerClock	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/masterSlave.c:348:22:timerSelectMasterSlaveExternalTriggerPrescaler	16	static
-D:/GITHUB/STM32/EDS_2026/MCAL/Src/mcalTimer/masterSlave.c:402:22:timerSelectMasterSlaveExternalTriggerFilter	16	static

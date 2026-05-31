@@ -1,4 +1,24 @@
 var searchData=
 [
-  ['weight_0',['weight',['../struct_mean_val.html#a4950c5da56a155fddc8bc57f51692b1e',1,'MeanVal']]]
+  ['ta_0',['TA',['../struct_p_i_d_contr.html#ac27ef3a87d331f7e7aad49e5092f72eb',1,'PIDContr']]],
+  ['targetrot_1',['targetRot',['../struct_balancer.html#a4ccb65400b7d4082a47bfa5f49f7174d',1,'Balancer']]],
+  ['targettra_2',['targetTra',['../struct_balancer.html#a0ff28930230dd7cb4bed635177895515',1,'Balancer']]],
+  ['tarposl_3',['tarPosL',['../struct_balancer.html#ad434e4a938cb0cb4f00ec2ef96449bf8',1,'Balancer']]],
+  ['tarposr_4',['tarPosR',['../struct_balancer.html#a920e9a34d9b5f439c6fe24bdb666cf50',1,'Balancer']]],
+  ['tarvelo_5',['tarVelo',['../struct_balancer.html#a31c11110231b187179752da4799ef10b',1,'Balancer']]],
+  ['taskmode_6',['TaskMode',['../struct_balancer.html#a190620dcad9ab122c031959880871d6a',1,'Balancer']]],
+  ['tcc_7',['tcc',['../struct_sequence_step_enables.html#a40b710604481190c6d294274acdbe3eb',1,'SequenceStepEnables']]],
+  ['temp_5fraw_8',['temp_raw',['../struct_m_p_u6050.html#a45541d9e47d1dcd2eba1930fa73a504e',1,'MPU6050']]],
+  ['temperature_9',['temperature',['../struct_m_p_u6050.html#a029fdb599087eebc30c1137f66cd1d82',1,'MPU6050']]],
+  ['tft_10',['TFT',['../_s_t7735_8c.html#ae0ac90e2838c98fb5144d0ecff009b1d',1,'ST7735.c']]],
+  ['timebase_11',['timebase',['../struct_m_p_u6050.html#a55c37f1ced84424a61e2462e703e4f64',1,'MPU6050']]],
+  ['timertrigger_12',['timerTrigger',['../main_8c.html#a8abc6e38740f7419c055b714372dbacc',1,'main.c']]],
+  ['tof1_13',['TOF1',['../main_8c.html#ad6ada79d2d3bb807598119cda53537c6',1,'main.c']]],
+  ['tof_5faddress_5fused_14',['TOF_address_used',['../struct_t_o_f_sensor.html#a8d4724cc458aae298ac2c2a6af6e3a1b',1,'TOFSensor::TOF_address_used'],['../i2c_t_o_f_8c.html#a6863b2a5f516d65dca1e6b5d6acd5e72',1,'TOF_address_used:&#160;i2cTOF.c']]],
+  ['tof_5fcontinuous_5fmode_15',['TOF_continuous_mode',['../i2c_t_o_f_8c.html#a154d284cba245466f3a104721cbe73fb',1,'i2cTOF.c']]],
+  ['tof_5fdistance_5f1_16',['TOF_DISTANCE_1',['../main_8c.html#a56685725cb56a3519772a5d43ff3652e',1,'main.c']]],
+  ['tof_5fi2c_17',['TOF_i2c',['../i2c_t_o_f_8c.html#ac56fd26d38f8d3b9909325baa42efa9a',1,'i2cTOF.c']]],
+  ['tof_5fmeasuringage_18',['TOF_measuringage',['../struct_t_o_f_sensor.html#aa8acef2cda07458e55230162f903b7a4',1,'TOFSensor']]],
+  ['tof_5freadyflag_19',['TOF_readyFlag',['../struct_t_o_f_sensor.html#a3c5063b1b383e619f89192994e42c11e',1,'TOFSensor']]],
+  ['tof_5fstop_5fvariable_20',['TOF_stop_variable',['../i2c_t_o_f_8c.html#a765c0f264ad9cdb19f91cc5b07bbd56f',1,'i2cTOF.c']]]
 ];
